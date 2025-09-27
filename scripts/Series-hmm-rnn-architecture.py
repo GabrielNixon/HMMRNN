@@ -147,6 +147,7 @@ if __name__ == '__main__':
         torch.save({'model': model.state_dict(), 'g_mean': vgmean, 'g_seq': g.cpu()}, 'tiny_moa_rnn_ckpt.pt')
         torch.save({'actions': a_te.cpu(), 'rewards': r_te.cpu(), 'transitions': t_te.cpu()}, 'tiny_moa_rnn_eval_batch.pt')
 
+
 class PhaseEmitter(nn.Module):
     def __init__(self, in_dim=3, hidden=8, K=2):
         super().__init__()
@@ -253,3 +254,56 @@ if __name__ == '__main__':
         pi_log, g, lg = model(x, Q_seq)
         torch.save({'model': model.state_dict(), 'g_mean': vgmean, 'g_seq': g.cpu()}, 'series_hmm_tinymoa_ckpt.pt')
         torch.save({'actions': a_te.cpu(), 'rewards': r_te.cpu(), 'transitions': t_te.cpu()}, 'series_hmm_eval_batch.pt')
+
+# scripts/train_dual.py
+import argparse, torch
+
+def train_dual_main():
+    p = argparse.ArgumentParser()
+    p.add_argument('--arch', choices=['tiny','series_hmm'], default='tiny')
+    p.add_argument('--epochs', type=int, default=10)
+    p.add_argument('--batch', type=int, default=64)
+    p.add_argument('--T', type=int, default=200)
+    p.add_argument('--hidden', type=int, default=2)
+    p.add_argument('--K', type=int, default=2)
+    p.add_argument('--lr', type=float, default=1e-3)
+    p.add_argument('--seed', type=int, default=0)
+    p.add_argument('--out', type=str, default='ckpt')
+    args = p.parse_args()
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    torch.manual_seed(args.seed)
+    agents = [
+        ('MFr', MFReward(alpha=0.3, decay=0.0)),
+        ('MFc', MFChoice(kappa=0.1, rho=0.0)),
+        ('MBc', MBCommonRareStub()),
+        ('MBr', MBCommonRareStub()),
+        ('Bias', BiasAgent(0.0, 0.0)),
+    ]
+    if args.arch == 'tiny':
+        model = TinyMoARNN(n_agents=len(agents), hidden=args.hidden).to(device)
+    else:
+        model = SeriesHMMTinyMoARNN(n_agents=len(agents), hidden=args.hidden, K=args.K, emit_hidden=8).to(device)
+    opt = torch.optim.Adam(model.parameters(), lr=args.lr)
+    a_tr, r_tr, t_tr = synthetic_batch(B=args.batch, T=args.T, seed=args.seed+1, device=device)
+    a_te, r_te, t_te = synthetic_batch(B=args.batch, T=args.T, seed=args.seed+2, device=device)
+    for _ in range(args.epochs):
+        if args.arch == 'tiny':
+            loss, acc, gmean = train_epoch(model, opt, a_tr, r_tr, t_tr, agents)
+            vloss, vacc, vgmean = eval_epoch(model, a_te, r_te, t_te, agents)
+        else:
+            loss, acc, gmean = train_epoch_hmm(model, opt, a_tr, r_tr, t_tr, agents)
+            vloss, vacc, vgmean = eval_epoch_hmm(model, a_te, r_te, t_te, agents)
+    with torch.no_grad():
+        x = make_inputs(a_te, r_te, t_te)
+        Q_seq = build_Q_seq(a_te, r_te, t_te, agents)
+        if args.arch == 'tiny':
+            pi_log, g = model(x, Q_seq)
+            torch.save({'arch': args.arch, 'model': model.state_dict(), 'g_mean': vgmean, 'g_seq': g.cpu()}, f'{args.out}_{args.arch}.pt')
+        else:
+            pi_log, g, lg = model(x, Q_seq)
+            torch.save({'arch': args.arch, 'model': model.state_dict(), 'g_mean': vgmean, 'g_seq': g.cpu()}, f'{args.out}_{args.arch}.pt')
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) > 1 and (sys.argv[1].startswith('--arch') or sys.argv[1] in ['--epochs','--batch','--T','--hidden','--K','--lr','--seed','--out']):
+        train_dual_main()

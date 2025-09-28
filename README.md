@@ -7,13 +7,6 @@ This repo implements:
 - **TinyMoA-RNN** — a compact GRU that mixes simple “agents” (MF-reward, MF-choice, MB, Bias).
 - **Series-HMM-TinyMoARNN** — an HMM over *phase-specific* TinyMoA heads where **emissions are the per-phase action likelihoods**. Posteriors are computed via forward–backward and the final policy is the posterior-weighted mixture across phases.
 
-<p align="center">
-  <img width="420" src="fig/series_g_sample0.png" alt="Series HMM marginal agent gates">
-  <img width="420" src="fig/series_gamma_sample0.png" alt="HMM phase posteriors">
-</p>
-
----
-
 ## TL;DR results (synthetic)
 
 ## Two representative runs you can reproduce:

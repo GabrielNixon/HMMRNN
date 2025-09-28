@@ -37,8 +37,8 @@ Series-> NLL: 0.606 Acc: 0.629 PhaseAcc: 0.515
 
 ## Repo layout
 
-series_hmm_rnn/
-init.py
+series_hmm_rnn/ \
+init.py \
 agents.py # MF-Reward, MF-Choice, MB, Bias
 utils.py # Q-builders, losses
 models.py # TinyMoARNN, DiscreteHMM, SeriesHMMTinyMoARNN

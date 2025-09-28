@@ -39,16 +39,16 @@ Series-> NLL: 0.606 Acc: 0.629 PhaseAcc: 0.515
 
 series_hmm_rnn/ \
 init.py \
-agents.py # MF-Reward, MF-Choice, MB, Bias
-utils.py # Q-builders, losses
-models.py # TinyMoARNN, DiscreteHMM, SeriesHMMTinyMoARNN
-data.py # two-step synthetic generator
-train.py # train/eval loops
-metrics.py # permutation-invariant phase accuracy
-scripts/
-run_series_experiment.py
-configs/ # optional configs
-fig/ # saved figures (optional)
-checkpoints/ # optional local checkpoints
+agents.py # MF-Reward, MF-Choice, MB, Bias \
+utils.py # Q-builders, losses \
+models.py # TinyMoARNN, DiscreteHMM, SeriesHMMTinyMoARNN \
+data.py # two-step synthetic generator \
+train.py # train/eval loops \
+metrics.py # permutation-invariant phase accuracy \
+scripts/ \
+run_series_experiment.py \
+configs/ # optional configs \
+fig/ # saved figures (optional) \
+checkpoints/ # optional local checkpoints \
 
 

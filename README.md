@@ -18,7 +18,7 @@ Series-> NLL: 0.656 Acc: 0.626 PhaseAcc: 0.574
 
 ## Run B (same settings, different seed)
 
-Tiny -> NLL: 0.673 Acc: 0.594 \\
+Tiny -> NLL: 0.673 Acc: 0.594 \
 Series-> NLL: 0.606 Acc: 0.629 PhaseAcc: 0.515
 
 > **Note:** Raw `PhaseAcc` can vary due to **label switching** (phase IDs are arbitrary). For a robust metric, use *permutation-invariant* PhaseAcc (see below).

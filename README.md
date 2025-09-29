@@ -13,7 +13,7 @@ This repo implements:
 
 Run A (“decent baseline”)
 
-Tiny -> NLL: 0.737 Acc: 0.540
+Tiny -> NLL: 0.737 Acc: 0.540 \
 Series-> NLL: 0.656 Acc: 0.626 PhaseAcc: 0.574
 
 ## Run B (same settings, different seed)

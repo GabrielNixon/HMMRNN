@@ -13,20 +13,10 @@ This repo implements:
 
 Run A (“decent baseline”)
 
-python scripts/run_series_experiment.py \
-  --epochs 150 --B 64 --T 400 \
-  --hidden_tiny 2 --hidden_series 6 --K 2 \
-  --lr 1e-3 --seed 1 --dwell 120 --beta 3.5 --tau 1.25
-
 Tiny -> NLL: 0.737 Acc: 0.540
 Series-> NLL: 0.656 Acc: 0.626 PhaseAcc: 0.574
 
 ## Run B (same settings, different seed)
-
-python scripts/run_series_experiment.py \
-  --epochs 150 --B 64 --T 400 \
-  --hidden_tiny 2 --hidden_series 6 --K 2 \
-  --lr 1e-3 --seed 2 --dwell 120 --beta 3.5 --tau 1.25
 
 Tiny -> NLL: 0.673 Acc: 0.594
 Series-> NLL: 0.606 Acc: 0.629 PhaseAcc: 0.515

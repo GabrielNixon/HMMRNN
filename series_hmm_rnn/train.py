@@ -26,10 +26,10 @@ def eval_epoch_tiny(model, actions, rewards, transitions, agents, return_details
         return loss, acc, pi_log, g, Q_seq
     return loss, acc
 
-def train_epoch_series(model, opt, actions, rewards, transitions, agents):
+def train_epoch_series(model, opt, actions, rewards, transitions, agents=None):
     model.train()
     x = make_inputs(actions, rewards, transitions)
-    Q_seq = build_Q_seq(actions, rewards, transitions, agents)
+    Q_seq = build_Q_seq(actions, rewards, transitions, agents) if agents is not None else None
     pi_log, _, _ = model(x, Q_seq, actions=actions)
     loss = nll_loss(pi_log, actions)
     opt.zero_grad(); loss.backward()
@@ -40,10 +40,10 @@ def train_epoch_series(model, opt, actions, rewards, transitions, agents):
     return loss.item(), acc
 
 @torch.no_grad()
-def eval_epoch_series(model, actions, rewards, transitions, agents):
+def eval_epoch_series(model, actions, rewards, transitions, agents=None):
     model.eval()
     x = make_inputs(actions, rewards, transitions)
-    Q_seq = build_Q_seq(actions, rewards, transitions, agents)
+    Q_seq = build_Q_seq(actions, rewards, transitions, agents) if agents is not None else None
     pi_log, gk, lg = model(x, Q_seq, actions=actions)
     loss = nll_loss(pi_log, actions).item()
     acc  = (pi_log.argmax(-1) == actions).float().mean().item()

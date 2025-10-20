@@ -15,12 +15,16 @@ def train_epoch_tiny(model, opt, actions, rewards, transitions, agents):
     return loss.item(), acc
 
 @torch.no_grad()
-def eval_epoch_tiny(model, actions, rewards, transitions, agents):
+def eval_epoch_tiny(model, actions, rewards, transitions, agents, return_details=False):
     model.eval()
     x = make_inputs(actions, rewards, transitions)
     Q_seq = build_Q_seq(actions, rewards, transitions, agents)
-    pi_log, _ = model(x, Q_seq)
-    return nll_loss(pi_log, actions).item(), (pi_log.argmax(-1) == actions).float().mean().item()
+    pi_log, g = model(x, Q_seq)
+    loss = nll_loss(pi_log, actions).item()
+    acc = (pi_log.argmax(-1) == actions).float().mean().item()
+    if return_details:
+        return loss, acc, pi_log, g, Q_seq
+    return loss, acc
 
 def train_epoch_series(model, opt, actions, rewards, transitions, agents):
     model.train()

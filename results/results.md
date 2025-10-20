@@ -23,14 +23,6 @@ Textual logs for this run live under [`results/synthetic_run1/`](synthetic_run1/
 
 Confusion matrices for the phase alignment can be found in [`hmm_moa/metrics.json`](synthetic_run1/hmm_moa/metrics.json) and [`hmm_tinyrnn/metrics.json`](synthetic_run1/hmm_tinyrnn/metrics.json).
 
-## Visualisations
-
-The SVG summaries in [`visualizations.md`](visualizations.md) show training curves and split-wise accuracy comparisons for both models. Regenerate them with:
-
-```
-python scripts/plot_synthetic_results.py results/synthetic_run1 --out-dir fig --prefix synthetic_run1
-```
-
 ## Reproducing
 
 To regenerate these numbers without producing binary artefacts, run

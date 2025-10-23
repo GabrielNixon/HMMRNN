@@ -2,7 +2,7 @@
 
 This note documents how the repository synthesises behavioural sequences, why the design mirrors the HMM-MoA paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
 
-![Generator overview](./fig/synthetic_generation.svg)
+![Generator overview](fig/synthetic_generation.svg)
 
 ## 1. Synthetic data generation
 
@@ -21,7 +21,7 @@ The generator is invoked twice—once for training, once for testing—with inde
 
 ## 2. Training workflow
 
-![Model comparison](./fig/model_comparison.svg)
+![Model comparison](fig/model_comparison.svg)
 
 ### 2.1 Shared encoder and optimiser
 - A compact GRU encoder with hidden size 6 processes the action–reward–transition history for both emission heads.【F:series_hmm_rnn/models.py†L164-L199】【F:series_hmm_rnn/models.py†L247-L279】

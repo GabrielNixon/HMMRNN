@@ -1,8 +1,79 @@
 # Synthetic generator walkthrough
 
-This note expands on the synthetic benchmarking pipeline by illustrating the
-latent process, the observable traces, and how the two emission models recover
-the hidden phase structure.
+This note explains how the synthetic behavioral sequences are created and why
+the generator is designed this way. The goal is to produce controlled yet
+realistic data for testing whether an HMM or TinyRNN can recover long-lived
+latent phases from observable binary choices, transitions, and rewards.
+
+## Overview
+
+The synthetic environment mimics a two-stage decision task often used in
+behavioral experiments. At each trial, an agent chooses between two actions
+(e.g., “left” or “right”) and receives a probabilistic reward. Beneath these
+observable outcomes lies a **latent phase** that represents the agent’s control
+mode — for example, a “habitual” (model-free) phase versus a “goal-directed”
+(model-based) phase. The phase determines which action tends to be rewarded,
+and therefore influences the agent’s policy.
+
+During simulation, the agent stays in one phase for a prolonged period before
+switching to the other. Each continuous block lasts roughly **120 ± 10 trials**,
+meaning the generator samples dwell lengths uniformly from the range [110, 130].
+The “±10” is not a confidence interval or statistical error — it is deliberate
+jitter added to prevent every phase from being exactly the same length. This
+irregularity makes the sequences more natural and prevents the model from
+memorizing perfectly periodic switches.
+
+Conceptually, this setup is analogous to a rat performing a binary decision
+task: each trial corresponds to one left/right choice, and the animal tends to
+remain in one behavioral strategy for about 120 trials before changing its
+internal mode. The ±10 trials of variability represent the natural noise in how
+long the animal might persist in a given strategy.
+
+
+## Why the dwell time is fixed
+
+The **120-trial dwell** is a *hard-coded property of the data generator*, not
+something the HMM learns or predicts. This dwell defines the **true hidden
+schedule** of when the environment changes its latent state. By fixing this
+duration, we ensure that:
+
+- The ground-truth phase boundaries are known and reproducible.  
+- The HMM or TinyRNN must infer those switches purely from the observable
+  signals (actions and rewards).  
+- We can visually and quantitatively evaluate how well the model’s inferred
+  posteriors align with these known boundaries.
+
+If the generator itself used an internal stochastic transition matrix (like the
+HMM), the true dwell times would vary unpredictably across runs, making it
+harder to evaluate model accuracy. By contrast, a fixed target dwell (with
+small random jitter) gives a clean benchmark for testing recovery.
+
+
+## Relationship to the HMM transition matrix
+
+When fitting the model, the HMM is initialized with a **sticky transition
+matrix** whose diagonal entries are 0.97 and off-diagonal entries 0.03. This
+matrix encodes a bias toward phase persistence but does not enforce the true
+120-step dwell. Mathematically, a 0.97 self-stay probability corresponds to an
+expected dwell of about 33 steps:
+
+\[
+\text{Expected dwell} = \frac{1}{1 - 0.97} \approx 33.
+\]
+
+This discrepancy is intentional. The generator defines the true environment
+(phases last ~120 steps), while the HMM starts with a weaker persistence prior
+(expected 33 steps) so it must *learn* how long phases really last. If the
+model’s posterior aligns with the 120-trial ground truth despite starting from
+a looser prior, it confirms that the latent structure was successfully recovered
+from data.
+
+**In short:**  
+The generator hard-codes realistic behavioral blocks (≈120 ± 10 trials), and
+the model’s sticky transition matrix provides a flexible prior encouraging—but
+not dictating—persistence. Together, these design choices create a controlled
+testbed for evaluating how well different emission models (HMM–MoA vs. TinyRNN)
+can detect and track latent behavioral regimes.
 
 ## Latent phase dynamics
 
@@ -25,6 +96,7 @@ segments, matching the deterministic dwell structure above.
 
 ![Sequence overview](../fig/synthetic_demo_sequence_overview.svg)
 
+
 ## Training curves
 
 Both the SeriesHMM-TinyMoA and SeriesHMM-TinyRNN models optimise the negative
@@ -33,6 +105,7 @@ reaches higher action accuracy while the MoA plateaus earlier.
 
 ![Training NLL](../fig/synthetic_demo_train_nll.svg)
 ![Training accuracy](../fig/synthetic_demo_train_accuracy.svg)
+
 
 ## Posterior recovery
 
@@ -44,6 +117,7 @@ while the MoA head reacts more slowly and lags during certain transitions.
 ![SeriesHMM-TinyMoA posterior](../fig/synthetic_demo_hmm_moa_posterior.svg)
 ![SeriesHMM-TinyRNN posterior](../fig/synthetic_demo_hmm_tinyrnn_posterior.svg)
 
+
 ## Action accuracy comparison
 
 Aggregated train/test action accuracy highlights the TinyRNN smoothing benefit:
@@ -52,7 +126,6 @@ the same sticky HMM prior.
 
 ![Accuracy summary](../fig/synthetic_demo_action_accuracy.svg)
 
----
 
 *Reproduction*: regenerate the figures by running the synthetic pipeline and
 plotting helper:
@@ -62,4 +135,3 @@ python -m series_hmm_rnn.run_synthetic_pipeline --epochs 50 --B 16 --T 200 \
     --out-dir outputs/figure_run --device cpu
 python scripts/plot_synthetic_results.py outputs/figure_run --out-dir fig \
     --prefix synthetic_demo
-```

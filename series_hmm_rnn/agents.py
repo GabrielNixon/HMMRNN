@@ -32,8 +32,14 @@ class MFChoice:
 class BiasAgent:
     def __init__(self, bias_left=0.0, bias_right=0.0):
         self.bias = torch.tensor([bias_left, bias_right])
-    def forward(self, B, T, device):
-        return self.bias.to(device).view(1,1,2).repeat(B,T,1)
+    def forward(self, *args):
+        if len(args) == 3 and not torch.is_tensor(args[0]):
+            B, T, device = args
+        else:
+            actions = args[0]
+            B, T = actions.size(0), actions.size(1)
+            device = actions.device
+        return self.bias.to(device).view(1,1,2).repeat(B, T, 1)
 
 class MBReward:
     def __init__(self, p_common=0.7, alpha_state=0.2):

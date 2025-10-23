@@ -57,9 +57,10 @@ matrix encodes a bias toward phase persistence but does not enforce the true
 120-step dwell. Mathematically, a 0.97 self-stay probability corresponds to an
 expected dwell of about 33 steps:
 
-\[
-\text{Expected dwell} = \frac{1}{1 - 0.97} \approx 33.
-\]
+$$
+\text{Expected dwell} = \frac{1}{1 - 0.97} \approx 33
+$$
+
 
 This discrepancy is intentional. The generator defines the true environment
 (phases last ~120 steps), while the HMM starts with a weaker persistence prior
@@ -102,7 +103,7 @@ Together, these four tracks illustrate how long-term latent structure interacts 
 the **latent phase** drives persistent behavioral tendencies,
 while the **actions, transitions, and rewards** fluctuate around that underlying regime.
 
-The parameters shown below the plot summarize the generator setup for this run:
+The parameters shown below the plot summarize the generator setup for this run: dwell = 120 p_common = 0.7 β = 3.5 sticky = 0.97
 
 
 **Interpretation:**  

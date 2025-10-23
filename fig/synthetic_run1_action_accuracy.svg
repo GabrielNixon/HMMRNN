@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360">
+<rect x="0" y="0" width="640" height="360" fill="#ffffff"/>
+<text x="320.0" y="20" text-anchor="middle" font-size="16" font-family="sans-serif">Action Accuracy (Train/Test)</text>
+<text x="40.0" y="180.0" transform="rotate(-90 40.0,180.0)" text-anchor="middle" font-size="12" font-family="sans-serif">Accuracy</text>
+<line x1="80" y1="300" x2="620" y2="300" stroke="#000"/>
+<line x1="80" y1="30" x2="80" y2="300" stroke="#000"/>
+<line x1="80" y1="300.0" x2="620" y2="300.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="70" y="304.0" text-anchor="end" font-size="11" font-family="sans-serif">0</text>
+<line x1="80" y1="300.0" x2="620" y2="300.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="70" y="304.0" text-anchor="end" font-size="11" font-family="sans-serif">0</text>
+<line x1="80" y1="300.0" x2="620" y2="300.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="70" y="304.0" text-anchor="end" font-size="11" font-family="sans-serif">0</text>
+<line x1="80" y1="30.0" x2="620" y2="30.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="70" y="34.0" text-anchor="end" font-size="11" font-family="sans-serif">1</text>
+<line x1="80" y1="30.0" x2="620" y2="30.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="70" y="34.0" text-anchor="end" font-size="11" font-family="sans-serif">1</text>
+<rect x="107.0" y="152.09061920642853" width="81.0" height="147.90938079357147" fill="#4C78A8"/>
+<text x="147.5" y="147.09061920642853" text-anchor="middle" font-size="11" font-family="sans-serif">0.548</text>
+<text x="147.5" y="315" text-anchor="middle" font-size="11" font-family="sans-serif">Hmm Moa (train)</text>
+<rect x="242.0" y="150.57188272476196" width="81.0" height="149.42811727523804" fill="#F58518"/>
+<text x="282.5" y="145.57188272476196" text-anchor="middle" font-size="11" font-family="sans-serif">0.553</text>
+<text x="282.5" y="315" text-anchor="middle" font-size="11" font-family="sans-serif">Hmm Moa (test)</text>
+<rect x="377.0" y="101.63437306880951" width="81.0" height="198.3656269311905" fill="#54A24B"/>
+<text x="417.5" y="96.63437306880951" text-anchor="middle" font-size="11" font-family="sans-serif">0.735</text>
+<text x="417.5" y="315" text-anchor="middle" font-size="11" font-family="sans-serif">Hmm Tinyrnn (train)</text>
+<rect x="512.0" y="98.5125070810318" width="81.0" height="201.4874929189682" fill="#E45756"/>
+<text x="552.5" y="93.5125070810318" text-anchor="middle" font-size="11" font-family="sans-serif">0.746</text>
+<text x="552.5" y="315" text-anchor="middle" font-size="11" font-family="sans-serif">Hmm Tinyrnn (test)</text>
+</svg>

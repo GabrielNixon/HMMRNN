@@ -140,13 +140,29 @@ Together, these curves show that the TinyRNN learns faster and achieves a better
 
 ## Posterior recovery
 
-After 50 training epochs, the HMM posteriors show how each model tracks the
-latent phase on the held-out test rollouts. The TinyRNN variant produces sharp
-posterior changes that almost perfectly align with the ground-truth switches,
-while the MoA head reacts more slowly and lags during certain transitions.
+The plots below show the posterior probabilities of each latent phase over time
+for both fitted models. Each curve represents the model’s belief that the agent
+is currently in Phase 0 (blue) or Phase 1 (orange), while the shaded background
+indicates the true ground-truth phase sequence from the generator.
+
+- **Top panel (HMM–MoA):**  
+  The posterior transitions between phases gradually, with overlapping
+  probabilities that indicate uncertainty around switch points. The MoA head’s
+  emissions respond more sluggishly, often lagging behind the actual phase
+  change.
+
+- **Bottom panel (HMM–TinyRNN):**  
+  The posterior transitions sharply between states, with near-perfect alignment
+  to the ground-truth boundaries. The RNN-based emission captures context from
+  action–reward history, enabling faster and more confident phase recovery.
+
+These plots demonstrate that while both models share the same sticky HMM
+transition prior (0.97 self-stay), the TinyRNN’s smoother emission dynamics make
+it far better at inferring and tracking latent behavioral regimes.
 
 ![SeriesHMM-TinyMoA posterior](../fig/synthetic_demo_hmm_moa_posterior.svg)
 ![SeriesHMM-TinyRNN posterior](../fig/synthetic_demo_hmm_tinyrnn_posterior.svg)
+
 
 
 ## Action accuracy comparison

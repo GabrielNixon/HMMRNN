@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
+  <style>
+    .title { font: bold 24px 'Helvetica Neue', Arial, sans-serif; }
+    .subtitle { font: italic 16px 'Helvetica Neue', Arial, sans-serif; }
+    .label { font: 16px 'Helvetica Neue', Arial, sans-serif; }
+    .note { font: 14px 'Helvetica Neue', Arial, sans-serif; fill: #374151; }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0 10 3.5 0 7" fill="#111827" />
+    </marker>
+  </defs>
+  <rect width="720" height="360" fill="#f9fafb" stroke="#d1d5db" />
+  <text x="360" y="44" class="title" text-anchor="middle">Synthetic Two-Step Task Generator</text>
+  <text x="360" y="72" class="subtitle" text-anchor="middle">Sticky latent phases with controllable transition asymmetry</text>
+
+  <rect x="40" y="120" width="200" height="90" rx="12" ry="12" fill="#dbeafe" stroke="#2563eb" />
+  <text x="140" y="150" class="label" text-anchor="middle">Latent Phase</text>
+  <text x="140" y="174" class="label" text-anchor="middle">Sampler</text>
+  <text x="140" y="198" class="note" text-anchor="middle">High self-transition prob.</text>
+
+  <rect x="270" y="120" width="200" height="90" rx="12" ry="12" fill="#dcfce7" stroke="#16a34a" />
+  <text x="370" y="150" class="label" text-anchor="middle">State-Conditioned</text>
+  <text x="370" y="174" class="label" text-anchor="middle">Reward Template</text>
+  <text x="370" y="198" class="note" text-anchor="middle">(rare vs. common rewards)</text>
+
+  <rect x="500" y="120" width="180" height="90" rx="12" ry="12" fill="#ede9fe" stroke="#7c3aed" />
+  <text x="590" y="150" class="label" text-anchor="middle">Mixture Policy</text>
+  <text x="590" y="174" class="label" text-anchor="middle">Softmax(β·Q)</text>
+  <text x="590" y="198" class="note" text-anchor="middle">Samples action aₜ</text>
+
+  <rect x="270" y="240" width="200" height="90" rx="12" ry="12" fill="#fee2e2" stroke="#dc2626" />
+  <text x="370" y="270" class="label" text-anchor="middle">Transition & Reward</text>
+  <text x="370" y="294" class="label" text-anchor="middle">Emission</text>
+  <text x="370" y="318" class="note" text-anchor="middle">Records phase label, reward rₜ</text>
+
+  <path d="M240 165 H270" stroke="#111827" stroke-width="3" marker-end="url(#arrowhead)" />
+  <path d="M470 165 H500" stroke="#111827" stroke-width="3" marker-end="url(#arrowhead)" />
+  <path d="M590 210 V240" stroke="#111827" stroke-width="3" marker-end="url(#arrowhead)" />
+  <path d="M140 210 L140 240" stroke="#111827" stroke-width="3" marker-end="url(#arrowhead)" />
+  <text x="140" y="230" class="note" text-anchor="middle">Dwell drawn per phase</text>
+
+  <text x="360" y="104" class="note" text-anchor="middle">Outputs: actions, rewards, transition type, latent phase IDs</text>
+</svg>

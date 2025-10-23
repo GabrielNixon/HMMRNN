@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="400" viewBox="0 0 760 400">
+  <style>
+    .title { font: bold 24px sans-serif; }
+    .subtitle { font: italic 16px sans-serif; }
+    .label { font: 16px sans-serif; }
+    .small { font: 14px sans-serif; }
+  </style>
+  <rect width="760" height="400" fill="#f8fafc" stroke="#cbd5f5" />
+  <text x="380" y="40" class="title" text-anchor="middle">Modeling Stack</text>
+  <text x="380" y="68" class="subtitle" text-anchor="middle">Shared encoder with alternative emission heads</text>
+
+  <rect x="60" y="100" width="280" height="250" rx="14" ry="14" fill="#e2f0fb" stroke="#1d4ed8" />
+  <text x="200" y="120" class="label" text-anchor="middle">Shared components</text>
+  <line x1="60" y1="140" x2="340" y2="140" stroke="#1d4ed8" stroke-width="2" />
+  <text x="200" y="170" class="small" text-anchor="middle">Tiny GRU encoder (hidden=6)</text>
+  <text x="200" y="195" class="small" text-anchor="middle">Feature stack: actions, rewards, transitions</text>
+  <text x="200" y="220" class="small" text-anchor="middle">Inverse-temperature τ = 1.25</text>
+  <text x="200" y="245" class="small" text-anchor="middle">Sticky init: stay prob 0.97</text>
+  <text x="200" y="270" class="small" text-anchor="middle">Two latent phases (K = 2)</text>
+  <text x="200" y="295" class="small" text-anchor="middle">Adam optimizer, lr = 1e-3</text>
+
+  <rect x="380" y="120" width="150" height="110" rx="12" ry="12" fill="#fef3c7" stroke="#92400e" />
+  <text x="455" y="150" class="label" text-anchor="middle">HMM-MoA head</text>
+  <text x="455" y="175" class="small" text-anchor="middle">Agent logits Wg·h + b</text>
+  <text x="455" y="200" class="small" text-anchor="middle">Mixture of experts Q̂</text>
+
+  <rect x="560" y="120" width="150" height="110" rx="12" ry="12" fill="#e0f2f1" stroke="#047857" />
+  <text x="635" y="150" class="label" text-anchor="middle">HMM-TinyRNN head</text>
+  <text x="635" y="175" class="small" text-anchor="middle">Per-phase linear readouts</text>
+  <text x="635" y="200" class="small" text-anchor="middle">Direct value stream</text>
+
+  <rect x="380" y="260" width="150" height="70" rx="12" ry="12" fill="#fde2e2" stroke="#b91c1c" />
+  <text x="455" y="290" class="label" text-anchor="middle">HMM inference</text>
+  <text x="455" y="315" class="small" text-anchor="middle">Forward/backward γₜ</text>
+
+  <rect x="560" y="260" width="150" height="70" rx="12" ry="12" fill="#ddd6fe" stroke="#6d28d9" />
+  <text x="635" y="290" class="label" text-anchor="middle">Losses</text>
+  <text x="635" y="315" class="small" text-anchor="middle">NLL + accuracy</text>
+
+  <path d="M340 190 H380" stroke="#0f172a" stroke-width="3" marker-end="url(#arrow)" />
+  <path d="M530 175 H560" stroke="#0f172a" stroke-width="3" marker-end="url(#arrow)" />
+  <path d="M455 230 V260" stroke="#0f172a" stroke-width="3" marker-end="url(#arrow)" />
+  <path d="M635 230 V260" stroke="#0f172a" stroke-width="3" marker-end="url(#arrow)" />
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#0f172a" />
+    </marker>
+  </defs>
+</svg>

@@ -64,3 +64,31 @@ class SeriesHMMTinyMoARNN(nn.Module):
             log_gamma = self.hmm.forward_backward(emis)       # [B,T,K]
         log_pi_marg = torch.logsumexp(log_gamma.unsqueeze(-1) + log_pi_k, dim=2)   # [B,T,2]
         return log_pi_marg, gk, log_gamma
+
+
+class SeriesHMMTinyRNN(nn.Module):
+    """HMM whose per-phase emissions come from a shared TinyRNN head."""
+
+    def __init__(self, hidden=6, K=2, tau=1.25):
+        super().__init__()
+        self.K = K
+        self.tau = tau
+        self.rnn = nn.GRU(input_size=3, hidden_size=hidden, batch_first=True)
+        self.head = nn.Linear(hidden, K * 2)
+        self.hmm = DiscreteHMM(K)
+
+    def forward(self, x, Q_seq=None, actions=None):
+        del Q_seq  # unused but kept for API compatibility
+        B = x.size(0)
+        h0 = torch.zeros(1, B, self.rnn.hidden_size, device=x.device)
+        h, _ = self.rnn(x, h0)
+        logits = self.head(h).view(B, x.size(1), self.K, 2)
+        log_pi_k = F.log_softmax(logits, dim=-1)
+        if actions is None:
+            log_gamma = x.new_full((B, x.size(1), self.K), -math.log(self.K))
+        else:
+            idx = actions.long().unsqueeze(-1).unsqueeze(-1).expand(-1, -1, self.K, 1)
+            emis = log_pi_k.gather(-1, idx).squeeze(-1) * self.tau
+            log_gamma = self.hmm.forward_backward(emis)
+        log_pi_marg = torch.logsumexp(log_gamma.unsqueeze(-1) + log_pi_k, dim=2)
+        return log_pi_marg, None, log_gamma

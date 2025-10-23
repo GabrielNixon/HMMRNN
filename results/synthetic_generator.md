@@ -120,12 +120,22 @@ This produces realistic, block-structured behavior for the HMM or TinyRNN to rec
 
 ## Training curves
 
-Both the SeriesHMM-TinyMoA and SeriesHMM-TinyRNN models optimise the negative
-log-likelihood (NLL) on the synthetic batches. The TinyRNN converges faster and
-reaches higher action accuracy while the MoA plateaus earlier.
+The plots below show the training progress of both emission models:
+
+- **Top panel:** Negative log-likelihood (NLL) decreases as the models fit the data.  
+  The TinyRNN (orange) continues to improve across epochs, while the MoA (blue) plateaus early,
+  indicating it has reached its representational limit.
+
+- **Bottom panel:** Action prediction accuracy over epochs.
+  The TinyRNN steadily increases its accuracy and surpasses the MoA, demonstrating stronger
+  generalization to the latent–action mapping.
+
+Together, these curves show that the TinyRNN learns faster and achieves a better overall fit
+(lower NLL and higher accuracy) under the same HMM transition prior.
 
 ![Training NLL](../fig/synthetic_demo_train_nll.svg)
 ![Training accuracy](../fig/synthetic_demo_train_accuracy.svg)
+
 
 
 ## Posterior recovery

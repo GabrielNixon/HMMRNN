@@ -24,20 +24,15 @@ from pathlib import Path
 from typing import Dict
 import torch
 
-from .agents import BiasAgent, MBReward, MFChoice, MFReward
 from .data import two_step_mb_generator
 from .metrics import phase_accuracy_permuted, align_gamma
 from .models import SeriesHMMTinyMoARNN, SeriesHMMTinyRNN
 from .train import eval_epoch_series, train_epoch_series
-
-
-def default_agents():
-    return [
-        ("MFr", MFReward(alpha=0.3, decay=0.0)),
-        ("MFc", MFChoice(kappa=0.2, rho=0.0)),
-        ("MB", MBReward(p_common=0.7, alpha_state=0.2)),
-        ("Bias", BiasAgent(0.0, 0.0)),
-    ]
+from .trial_history import (
+    agent_action_sequences,
+    default_agent_suite,
+    summarise_trial_history,
+)
 
 
 def init_sticky(series_model, stay=0.97, eps=1e-3):
@@ -102,7 +97,7 @@ def write_json(path: Path, payload) -> None:
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg = eval_epoch_series(
+    loss, acc, gk, lg, pi_log = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -111,7 +106,7 @@ def evaluate_series(model, batch, agents=None):
     )
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
-    extras = {"gamma": gamma, "gating": gk}
+    extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
     if "phases" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["phases"])
         metrics.update(
@@ -239,7 +234,8 @@ def main():
     train_device = to_device(train_batch, device)
     test_device = to_device(test_batch, device)
 
-    agents = default_agents()
+    agent_suite = default_agent_suite()
+    agents = agent_suite
 
     print("[hmm-moa] fitting SeriesHMMTinyMoARNN")
     hmm_moa = SeriesHMMTinyMoARNN(
@@ -279,6 +275,30 @@ def main():
     write_json(
         args.out_dir / "hmm_tinyrnn" / "posterior_trace.json",
         posterior_payload("SeriesHMM-TinyRNN", test_extras_rnn, test_batch, test_metrics_rnn),
+    )
+
+    # Trial-history regressions (observed vs models vs individual agents)
+    predictions = {
+        "SeriesHMM-TinyMoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+    }
+    agent_predictions = agent_action_sequences(agent_suite, test_batch)
+    predictions.update(agent_predictions)
+    history_results = summarise_trial_history(test_batch, predictions=predictions, max_lag=5)
+    write_json(
+        args.out_dir / "trial_history.json",
+        {
+            "lags": 5,
+            "series": [
+                {
+                    "label": result.label,
+                    "reward": list(result.reward),
+                    "choice": list(result.choice),
+                    "interaction": list(result.interaction),
+                }
+                for result in history_results
+            ],
+        },
     )
 
     print(

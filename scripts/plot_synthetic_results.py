@@ -15,7 +15,16 @@ import math
 from pathlib import Path
 from typing import Iterable, List, Mapping, Sequence
 
-COLOR_PALETTE = ["#4C78A8", "#F58518", "#54A24B", "#E45756"]
+COLOR_PALETTE = [
+    "#4C78A8",
+    "#F58518",
+    "#54A24B",
+    "#E45756",
+    "#72B7B2",
+    "#FF9DA6",
+    "#9C755F",
+    "#79706E",
+]
 
 
 def load_history(path: Path) -> Sequence[Mapping[str, float]]:
@@ -24,6 +33,11 @@ def load_history(path: Path) -> Sequence[Mapping[str, float]]:
 
 
 def load_metrics(path: Path) -> Mapping[str, Mapping[str, float]]:
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def load_trial_history(path: Path) -> Mapping[str, object]:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
@@ -253,6 +267,105 @@ def bar_chart(
     out_path.write_text("\n".join(svg_parts), encoding="utf-8")
 
 
+def plot_trial_history(
+    history: Mapping[str, object],
+    metric: str,
+    title: str,
+    out_path: Path,
+) -> None:
+    series = history.get("series")
+    if not isinstance(series, Sequence):
+        return
+    usable = []
+    for entry in series:
+        if not isinstance(entry, Mapping):
+            continue
+        coeffs = entry.get(metric)
+        if isinstance(coeffs, Sequence) and coeffs:
+            usable.append((str(entry.get("label", "Series")), [float(v) for v in coeffs]))
+    if not usable:
+        return
+
+    lags = int(history.get("lags", len(usable[0][1])))
+    if lags <= 0:
+        return
+
+    plot_width = 720
+    plot_height = 360
+    margin_left, margin_right = 70, 80
+    margin_top, margin_bottom = 50, 70
+    inner_width = plot_width - margin_left - margin_right
+    inner_height = plot_height - margin_top - margin_bottom
+
+    x_coords: List[float] = []
+    if lags == 1:
+        x_coords = [margin_left + inner_width / 2]
+    else:
+        for idx in range(lags):
+            x_coords.append(margin_left + inner_width * idx / (lags - 1))
+
+    y_min = min(min(values) for _, values in usable)
+    y_max = max(max(values) for _, values in usable)
+    if math.isclose(y_min, y_max):
+        y_min -= 0.5
+        y_max += 0.5
+
+    def scale_y(value: float) -> float:
+        return plot_height - margin_bottom - (value - y_min) / (y_max - y_min) * inner_height
+
+    y_ticks = _linear_ticks(y_min, y_max)
+
+    svg_parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{plot_width}" height="{plot_height}">',
+        f'<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>',
+        f'<text x="{plot_width / 2}" y="24" text-anchor="middle" font-size="16" font-family="sans-serif">{title}</text>',
+        f'<text x="{margin_left / 2}" y="{plot_height / 2}" transform="rotate(-90 {margin_left / 2},{plot_height / 2})" text-anchor="middle" font-size="12" font-family="sans-serif">Coefficient</text>',
+        f'<line x1="{margin_left}" y1="{plot_height - margin_bottom}" x2="{plot_width - margin_right}" y2="{plot_height - margin_bottom}" stroke="#000"/>',
+        f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{plot_height - margin_bottom}" stroke="#000"/>',
+    ]
+
+    for tick in y_ticks:
+        y = scale_y(tick)
+        svg_parts.append(
+            f'<line x1="{margin_left}" y1="{y:.2f}" x2="{plot_width - margin_right}" y2="{y:.2f}" stroke="#e0e0e0" stroke-dasharray="4 4"/>'
+        )
+        svg_parts.append(
+            f'<text x="{margin_left - 10}" y="{y + 4:.2f}" text-anchor="end" font-size="11" font-family="sans-serif">{_format_float(tick)}</text>'
+        )
+
+    for idx, (label, values) in enumerate(usable):
+        color = COLOR_PALETTE[idx % len(COLOR_PALETTE)]
+        coords = " ".join(f"{x_coords[i]:.2f},{scale_y(val):.2f}" for i, val in enumerate(values))
+        svg_parts.append(
+            f'<polyline fill="none" stroke="{color}" stroke-width="2" points="{coords}"/>'
+        )
+        for i, val in enumerate(values):
+            svg_parts.append(
+                f'<circle cx="{x_coords[i]:.2f}" cy="{scale_y(val):.2f}" r="3" fill="{color}"/>'
+            )
+
+    legend_x = margin_left + 10
+    legend_y = margin_top + 10
+    for idx, (label, _) in enumerate(usable):
+        color = COLOR_PALETTE[idx % len(COLOR_PALETTE)]
+        svg_parts.append(
+            f'<rect x="{legend_x}" y="{legend_y + idx * 18}" width="12" height="12" fill="{color}"/>'
+        )
+        svg_parts.append(
+            f'<text x="{legend_x + 18}" y="{legend_y + idx * 18 + 10}" font-size="11" font-family="sans-serif">{label}</text>'
+        )
+
+    for i, x in enumerate(x_coords):
+        svg_parts.append(
+            f'<text x="{x:.2f}" y="{plot_height - margin_bottom + 18}" text-anchor="middle" font-size="11" font-family="sans-serif">lag {i + 1}</text>'
+        )
+
+    svg_parts.append("</svg>")
+
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text("\n".join(svg_parts), encoding="utf-8")
+
+
 def collect_runs(run_dir: Path) -> List[Mapping[str, object]]:
     runs: List[Mapping[str, object]] = []
     for subdir in sorted(run_dir.iterdir()):
@@ -327,6 +440,28 @@ def main() -> None:
         ylabel="Accuracy",
         out_path=args.out_dir / f"{prefix}_action_accuracy.svg",
     )
+
+    trial_history_path = args.run_dir / "trial_history.json"
+    if trial_history_path.exists():
+        history = load_trial_history(trial_history_path)
+        plot_trial_history(
+            history,
+            metric="reward",
+            title="Trial-history regression (reward)",
+            out_path=args.out_dir / f"{prefix}_trial_history_reward.svg",
+        )
+        plot_trial_history(
+            history,
+            metric="choice",
+            title="Trial-history regression (choice)",
+            out_path=args.out_dir / f"{prefix}_trial_history_choice.svg",
+        )
+        plot_trial_history(
+            history,
+            metric="interaction",
+            title="Trial-history regression (choice × reward)",
+            out_path=args.out_dir / f"{prefix}_trial_history_interaction.svg",
+        )
 
 
 if __name__ == "__main__":  # pragma: no cover - CLI entry point

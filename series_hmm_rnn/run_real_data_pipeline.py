@@ -102,7 +102,7 @@ def write_json(path: Path, payload) -> None:
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg, pi_log = eval_epoch_series(
+    loss, acc, gk, lg = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -111,7 +111,7 @@ def evaluate_series(model, batch, agents=None):
     )
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
-    extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
+    extras = {"gamma": gamma, "gating": gk}
     if "phases" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["phases"])
         metrics.update(
@@ -186,22 +186,11 @@ def posterior_payload(label: str, extras: Dict[str, torch.Tensor], batch: Dict[s
         "label": label,
         "posterior": tensor_first_sequence(extras["gamma"]).tolist(),
     }
-    obs = {}
-    for key in ("actions", "rewards", "transitions"):
-        if key in batch:
-            obs[key] = tensor_first_sequence(batch[key]).tolist()
-    if obs:
-        payload["observations"] = obs
     if "phases" in batch:
-        phases = tensor_first_sequence(batch["phases"]).tolist()
-        payload["phases"] = phases
-        if "states" not in payload:
-            payload["states"] = phases
+        payload["phases"] = tensor_first_sequence(batch["phases"]).tolist()
     gating = extras.get("gating")
     if gating is not None:
         payload["gating"] = tensor_first_sequence(gating).tolist()
-    if "pi_log" in extras:
-        payload["policy_logits"] = tensor_first_sequence(extras["pi_log"]).tolist()
     best_perm = metrics.get("best_permutation")
     if best_perm is not None:
         payload["best_permutation"] = best_perm
@@ -249,19 +238,6 @@ def main():
     train_batch, test_batch = split_train_test(full_batch, holdout=args.holdout)
     train_device = to_device(train_batch, device)
     test_device = to_device(test_batch, device)
-
-    sample_trace = {
-        "metadata": {
-            "num_train_sessions": int(train_batch["actions"].shape[0]),
-            "num_test_sessions": int(test_batch["actions"].shape[0]),
-            "T": int(full_batch["actions"].shape[1]),
-            "holdout": args.holdout,
-            "demo_synthetic": bool(args.demo_synthetic),
-        },
-        "train": {k: tensor_first_sequence(v).tolist() for k, v in train_batch.items()},
-        "test": {k: tensor_first_sequence(v).tolist() for k, v in test_batch.items()},
-    }
-    write_json(args.out_dir / "sample_trace.json", sample_trace)
 
     agents = default_agents()
 

@@ -3,7 +3,7 @@
 This document summarises each figure produced in `results/real_data/demo_fig` so that the plots can be interpreted quickly when presenting the real-data analysis.
 
 ## `real_demo_action_accuracy.svg`
-![real_demo_action_accuracy](demo_fig/real_demo_action_accuracy.svg)
+![real_demo_action_accuracy](demo_fig/real_demo_action_accuracy.svg) \\
 Shows how accurately each evaluated model predicts the agent's actions on held-out trials. Higher accuracy indicates a closer alignment between the model's policy and the observed choices. Compare the lines to assess which agent class best matches behaviour across the session.
 
 ## `real_demo_phase_accuracy.svg`

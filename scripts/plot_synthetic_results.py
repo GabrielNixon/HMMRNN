@@ -13,14 +13,9 @@ import argparse
 import json
 import math
 from pathlib import Path
-from typing import Iterable, List, Mapping, Optional, Sequence
+from typing import Iterable, List, Mapping, Sequence
 
 COLOR_PALETTE = ["#4C78A8", "#F58518", "#54A24B", "#E45756"]
-STATE_COLORS = ["#4C78A8", "#F58518", "#54A24B", "#E45756"]
-BINARY_LIGHT = "#e6ecf3"
-BINARY_DARK = "#3b6fb6"
-ACTION_COLORS = {0: "#4C78A8", 1: "#F58518"}
-TRANSITION_COLORS = {1: "#54A24B", 0: "#E45756"}
 
 
 def load_history(path: Path) -> Sequence[Mapping[str, float]]:
@@ -29,16 +24,6 @@ def load_history(path: Path) -> Sequence[Mapping[str, float]]:
 
 
 def load_metrics(path: Path) -> Mapping[str, Mapping[str, float]]:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
-
-
-def load_sample_trace(path: Path) -> Mapping[str, object]:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
-
-
-def load_posterior_trace(path: Path) -> Mapping[str, object]:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
@@ -268,270 +253,6 @@ def bar_chart(
     out_path.write_text("\n".join(svg_parts), encoding="utf-8")
 
 
-def _state_segments(states: Sequence[int]) -> List[tuple]:
-    segments: List[tuple] = []
-    if not states:
-        return segments
-    start = 0
-    current = states[0]
-    for idx in range(1, len(states)):
-        value = states[idx]
-        if value != current:
-            segments.append((start, idx, current))
-            start = idx
-            current = value
-    segments.append((start, len(states), current))
-    return segments
-
-
-def sequence_overview_plot(
-    trace: Mapping[str, Sequence[int]],
-    metadata: Mapping[str, object],
-    out_path: Path,
-    *,
-    max_steps: int = 80,
-) -> None:
-    states = trace.get("states")
-    actions = trace.get("actions")
-    transitions = trace.get("transitions")
-    rewards = trace.get("rewards")
-    if not isinstance(states, Sequence) or not states:
-        return
-    steps = min(len(states), max_steps)
-    if steps <= 0:
-        return
-
-    def _slice(seq):
-        if isinstance(seq, Sequence):
-            return [int(seq[i]) for i in range(min(len(seq), steps))]
-        return []
-
-    states_slice = _slice(states)
-    actions_slice = _slice(actions)
-    transitions_slice = _slice(transitions)
-    rewards_slice = _slice(rewards)
-
-    plot_width = 820
-    plot_height = 320
-    margin_left, margin_top, margin_right, margin_bottom = 80, 40, 20, 60
-    inner_width = plot_width - margin_left - margin_right
-    row_height = 40
-    col_width = inner_width / steps
-
-    svg_parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{plot_width}" height="{plot_height}">',
-        '<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>',
-        '<text x="410" y="24" text-anchor="middle" font-size="16" font-family="sans-serif">Synthetic Trace Overview</text>',
-    ]
-
-    rows = [
-        ("Latent phase", states_slice, lambda v: STATE_COLORS[v % len(STATE_COLORS)]),
-        ("Action", actions_slice, lambda v: ACTION_COLORS.get(v, ACTION_COLORS.get(v % 2, "#999"))),
-        ("Transition", transitions_slice, lambda v: TRANSITION_COLORS.get(v, "#999")),
-        ("Reward", rewards_slice, lambda v: BINARY_DARK if v else BINARY_LIGHT),
-    ]
-
-    for row_idx, (label, values, color_fn) in enumerate(rows):
-        y_base = margin_top + row_idx * row_height
-        svg_parts.append(
-            f'<text x="{margin_left - 10}" y="{y_base + row_height / 2 + 5}" text-anchor="end" font-size="12" '
-            f'font-family="sans-serif">{label}</text>'
-        )
-        for step_idx in range(steps):
-            value = values[step_idx] if step_idx < len(values) else 0
-            x = margin_left + step_idx * col_width
-            color = color_fn(value)
-            svg_parts.append(
-                f'<rect x="{x:.2f}" y="{y_base}" width="{col_width:.2f}" height="{row_height - 6}" '
-                f'fill="{color}" stroke="#ffffff" stroke-width="0.5"/>'
-            )
-
-    # time axis ticks
-    tick_count = min(10, steps)
-    for tick in range(tick_count + 1):
-        step = int(round(tick * (steps - 1) / max(1, tick_count)))
-        x = margin_left + step * col_width
-        svg_parts.append(
-            f'<line x1="{x:.2f}" y1="{margin_top + len(rows) * row_height}" '
-            f'x2="{x:.2f}" y2="{margin_top + len(rows) * row_height + 6}" stroke="#000"/>'
-        )
-        svg_parts.append(
-            f'<text x="{x:.2f}" y="{margin_top + len(rows) * row_height + 22}" text-anchor="middle" '
-            f'font-size="11" font-family="sans-serif">t={step}</text>'
-        )
-
-    metadata_lines = []
-    dwell = metadata.get("dwell")
-    if dwell is not None:
-        metadata_lines.append(f"dwell≈{dwell}")
-    p_common = metadata.get("p_common")
-    if p_common is not None:
-        metadata_lines.append(f"p_common={p_common}")
-    beta = metadata.get("beta")
-    if beta is not None:
-        metadata_lines.append(f"β={beta}")
-    sticky = metadata.get("sticky")
-    if sticky is not None:
-        metadata_lines.append(f"sticky={sticky}")
-    summary = ", ".join(metadata_lines)
-    if summary:
-        svg_parts.append(
-            f'<text x="{plot_width / 2}" y="{plot_height - margin_bottom + 35}" text-anchor="middle" '
-            f'font-size="12" font-family="sans-serif">{summary}</text>'
-        )
-
-    svg_parts.append("</svg>")
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text("\n".join(svg_parts), encoding="utf-8")
-
-
-def transition_matrix_plot(sticky: float, dwell: Optional[int], out_path: Path) -> None:
-    stay = float(sticky)
-    switch = 1.0 - stay
-    matrix = [[stay, switch], [switch, stay]]
-    plot_width = 360
-    plot_height = 280
-    cell_size = 120
-    margin_left = 100
-    margin_top = 80
-
-    svg_parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{plot_width}" height="{plot_height}">',
-        '<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>',
-        '<text x="180" y="30" text-anchor="middle" font-size="16" font-family="sans-serif">Sticky Transition Matrix</text>',
-        '<text x="70" y="70" text-anchor="middle" font-size="13" font-family="sans-serif">from →</text>',
-        '<text x="180" y="60" text-anchor="middle" font-size="13" font-family="sans-serif">to phase</text>',
-    ]
-
-    for row in range(2):
-        y = margin_top + row * cell_size
-        svg_parts.append(
-            f'<text x="{margin_left - 20}" y="{y + cell_size / 2}" text-anchor="end" font-size="12" '
-            f'font-family="sans-serif">Phase {row}</text>'
-        )
-        for col in range(2):
-            x = margin_left + col * cell_size
-            value = matrix[row][col]
-            color = STATE_COLORS[col % len(STATE_COLORS)]
-            svg_parts.append(
-                f'<rect x="{x}" y="{y}" width="{cell_size}" height="{cell_size}" fill="{color}" fill-opacity="0.15" '
-                f'stroke="{color}" stroke-width="2" rx="6" ry="6"/>'
-            )
-            svg_parts.append(
-                f'<text x="{x + cell_size / 2}" y="{y + cell_size / 2}" text-anchor="middle" font-size="18" '
-                f'font-family="sans-serif">{value:.2f}</text>'
-            )
-
-    if dwell is not None and stay < 1.0:
-        expected = 1.0 / (1.0 - stay)
-        svg_parts.append(
-            f'<text x="{plot_width / 2}" y="{plot_height - 60}" text-anchor="middle" font-size="12" '
-            f'font-family="sans-serif">Expected dwell ≈ {expected:.1f} steps (target {dwell})</text>'
-        )
-
-    svg_parts.append("</svg>")
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text("\n".join(svg_parts), encoding="utf-8")
-
-
-def posterior_trace_plot(
-    posterior: Mapping[str, object],
-    out_path: Path,
-    *,
-    title: str,
-    max_steps: int = 200,
-) -> None:
-    posterior_values = posterior.get("posterior")
-    states = posterior.get("states")
-    if not isinstance(posterior_values, Sequence) or not posterior_values:
-        return
-    if not isinstance(states, Sequence) or not states:
-        return
-    steps = min(len(posterior_values), max_steps, len(states))
-    if steps <= 1:
-        return
-
-    series = [
-        [float(row[state_idx]) for row in posterior_values[:steps]]
-        for state_idx in range(len(posterior_values[0]))
-    ]
-    states_slice = [int(states[i]) for i in range(steps)]
-
-    plot_width = 780
-    plot_height = 320
-    margin_left, margin_bottom, margin_top, margin_right = 70, 50, 50, 20
-    inner_width = plot_width - margin_left - margin_right
-    inner_height = plot_height - margin_top - margin_bottom
-
-    svg_parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{plot_width}" height="{plot_height}">',
-        '<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>',
-        f'<text x="{plot_width / 2}" y="24" text-anchor="middle" font-size="16" font-family="sans-serif">{title}</text>',
-        f'<text x="{margin_left / 2}" y="{plot_height / 2}" transform="rotate(-90 {margin_left / 2},{plot_height / 2})" '
-        'text-anchor="middle" font-size="12" font-family="sans-serif">P(state)</text>',
-        f'<line x1="{margin_left}" y1="{plot_height - margin_bottom}" x2="{plot_width - margin_right}" y2="{plot_height - margin_bottom}" stroke="#000"/>',
-        f'<line x1="{margin_left}" y1="{margin_top}" x2="{margin_left}" y2="{plot_height - margin_bottom}" stroke="#000"/>',
-    ]
-
-    def scale_x(step_idx: int) -> float:
-        return margin_left + step_idx / (steps - 1) * inner_width
-
-    def scale_y(value: float) -> float:
-        return plot_height - margin_bottom - value * inner_height
-
-    for start, end, state in _state_segments(states_slice):
-        x0 = scale_x(start)
-        x1 = scale_x(end - 1) if end > start else x0
-        width = max(2.0, x1 - x0 + inner_width / max(steps - 1, 1))
-        color = STATE_COLORS[state % len(STATE_COLORS)]
-        svg_parts.append(
-            f'<rect x="{x0:.2f}" y="{margin_top}" width="{width:.2f}" height="{inner_height}" '
-            f'fill="{color}" fill-opacity="0.08" stroke="none"/>'
-        )
-
-    y_ticks = [i / 4 for i in range(5)]
-    for tick in y_ticks:
-        y = scale_y(tick)
-        svg_parts.append(
-            f'<line x1="{margin_left}" y1="{y:.2f}" x2="{plot_width - margin_right}" y2="{y:.2f}" stroke="#e0e0e0" stroke-dasharray="4 4"/>'
-        )
-        svg_parts.append(
-            f'<text x="{margin_left - 10}" y="{y + 4:.2f}" text-anchor="end" font-size="11" font-family="sans-serif">{tick:.2f}</text>'
-        )
-
-    for idx, values in enumerate(series):
-        color = STATE_COLORS[idx % len(STATE_COLORS)]
-        coords = " ".join(
-            f"{scale_x(step):.2f},{scale_y(val):.2f}" for step, val in enumerate(values)
-        )
-        svg_parts.append(
-            f'<polyline fill="none" stroke="{color}" stroke-width="2.2" points="{coords}"/>'
-        )
-
-    legend_x = margin_left + 10
-    legend_y = margin_top - 20
-    for idx in range(len(series)):
-        color = STATE_COLORS[idx % len(STATE_COLORS)]
-        svg_parts.append(
-            f'<rect x="{legend_x + idx * 120}" y="{legend_y - 12}" width="12" height="12" fill="{color}"/>'
-        )
-        svg_parts.append(
-            f'<text x="{legend_x + idx * 120 + 18}" y="{legend_y - 2}" font-size="11" font-family="sans-serif">Phase {idx}</text>'
-        )
-
-    tick_count = min(10, steps - 1)
-    for tick in range(tick_count + 1):
-        step = int(round(tick * (steps - 1) / max(1, tick_count)))
-        x = scale_x(step)
-        svg_parts.append(
-            f'<text x="{x:.2f}" y="{plot_height - margin_bottom + 18}" text-anchor="middle" font-size="11" font-family="sans-serif">t={step}</text>'
-        )
-
-    svg_parts.append("</svg>")
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text("\n".join(svg_parts), encoding="utf-8")
-
-
 def collect_runs(run_dir: Path) -> List[Mapping[str, object]]:
     runs: List[Mapping[str, object]] = []
     for subdir in sorted(run_dir.iterdir()):
@@ -546,7 +267,6 @@ def collect_runs(run_dir: Path) -> List[Mapping[str, object]]:
                 "label": subdir.name.replace("_", " ").title(),
                 "history": load_history(history_path),
                 "metrics": load_metrics(metrics_path),
-                "path": subdir,
             }
         )
     if not runs:
@@ -579,24 +299,6 @@ def main() -> None:
     runs = collect_runs(args.run_dir)
     prefix = args.prefix or args.run_dir.name
 
-    sample_path = args.run_dir / "sample_trace.json"
-    if sample_path.exists():
-        sample_trace = load_sample_trace(sample_path)
-        metadata = sample_trace.get("metadata", {}) if isinstance(sample_trace, Mapping) else {}
-        trace_body = None
-        if isinstance(sample_trace, Mapping):
-            trace_body = sample_trace.get("test") or sample_trace.get("train")
-        if isinstance(trace_body, Mapping):
-            sequence_overview_plot(
-                trace_body,
-                metadata if isinstance(metadata, Mapping) else {},
-                out_path=args.out_dir / f"{prefix}_sequence_overview.svg",
-            )
-        sticky = metadata.get("sticky") if isinstance(metadata, Mapping) else None
-        dwell = metadata.get("dwell") if isinstance(metadata, Mapping) else None
-        if sticky is not None:
-            transition_matrix_plot(float(sticky), dwell, args.out_dir / f"{prefix}_transition_matrix.svg")
-
     line_plot(
         runs,
         metric="train_nll",
@@ -625,21 +327,6 @@ def main() -> None:
         ylabel="Accuracy",
         out_path=args.out_dir / f"{prefix}_action_accuracy.svg",
     )
-
-    for entry in runs:
-        run_path = entry.get("path")
-        if not isinstance(run_path, Path):
-            continue
-        posterior_path = run_path / "posterior_trace.json"
-        if not posterior_path.exists():
-            continue
-        posterior_data = load_posterior_trace(posterior_path)
-        slug = run_path.name
-        posterior_trace_plot(
-            posterior_data,
-            out_path=args.out_dir / f"{prefix}_{slug}_posterior.svg",
-            title=f"{entry.get('label', run_path.name)} Posterior",
-        )
 
 
 if __name__ == "__main__":  # pragma: no cover - CLI entry point

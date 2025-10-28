@@ -7,6 +7,3 @@ results/**/*.ckpt
 results/**/*.svg
 results/**/*.png
 results/**/*.pdf
-
-# Local copies of external datasets
-data/

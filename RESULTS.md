@@ -8,8 +8,6 @@ only visualisations that can be regenerated directly from source.
 
 - **HMM-MoA** (mixture-of-agents emissions) trained on the long-dwell two-step generator.
 - **HMM-TinyRNN** (smooth recurrent emissions) trained on the same dataset with shared hyperparameters.
-- A real-data pipeline (`series_hmm_rnn/run_real_data_pipeline.py`) that mirrors the synthetic workflow once MixtureAgentsModels
-  sessions are converted into the expected NumPy bundle.
 - Supporting TinyMoA-only fits for debugging, and the plotting scripts that convert JSON logs into SVG figures.
 
 The pipeline that orchestrates the dataset synthesis, training, and logging lives in
@@ -51,23 +49,10 @@ dumped by the pipeline. 【F:results/results.md†L1-L40】
 3. **Regenerate SVG figures** from the JSON logs if desired:
 
    ```bash
- python scripts/plot_synthetic_results.py results/synthetic_run1 --out-dir fig --prefix synthetic_run1
-  ```
-
-4. **Process MixtureAgentsModels sessions** (optional real-data workflow):
-
-   ```bash
-   python -m series_hmm_rnn.run_real_data_pipeline \
-     --data data/mixture_agents_sessions.npz \
-     --out-dir results/real_data/mixture_agents \
-     --epochs 150 \
-     --device cpu
+   python scripts/plot_synthetic_results.py results/synthetic_run1 --out-dir fig --prefix synthetic_run1
    ```
 
-   Use `--demo-synthetic` for a quick smoke test when the `.mat` files are not
-   accessible.
-
-5. **Inspect TinyMoA-specific diagnostics** using the standalone CLI:
+4. **Inspect TinyMoA-specific diagnostics** using the standalone CLI:
 
    ```bash
    python -m series_hmm_rnn.run_tiny_fit --epochs 10 --B 8 --T 120 --trace-out '' --device cpu

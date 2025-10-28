@@ -32,9 +32,9 @@ from . import (
 
 def _default_agents():
     return [
-        ("Model-free value", MFReward(alpha=0.3, decay=0.0)),
-        ("Model-free choice", MFChoice(kappa=0.2, rho=0.0)),
-        ("Model-based", MBReward(p_common=0.7, alpha_state=0.2)),
+        ("MFr", MFReward(alpha=0.3, decay=0.0)),
+        ("MFc", MFChoice(kappa=0.2, rho=0.0)),
+        ("MB", MBReward(p_common=0.7, alpha_state=0.2)),
         ("Bias", BiasAgent(0.0, 0.0)),
     ]
 

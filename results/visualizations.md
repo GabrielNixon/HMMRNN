@@ -17,8 +17,3 @@ These figures were generated from `results/synthetic_run1` using `scripts/plot_s
 ![Phase accuracy by split](../fig/synthetic_run1_phase_accuracy.svg)
 
 *Bar chart of train/test phase accuracy. The TinyRNN nearly recovers the latent phases, while the MoA baseline lags behind.*
-
-![Agent mixture weights for the HMM-MoA head](../fig/synthetic_run1_hmm_moa_agent_mixture.svg)
-
-*Per-trial mixture weights for the model-free value, model-free choice, model-based, and bias agents after aligning the latent
-phases. The new labels make it easy to read off how strongly each component contributes at every point in the trajectory.*

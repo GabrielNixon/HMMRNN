@@ -4,22 +4,15 @@ from pathlib import Path
 
 import torch
 
-from .agents import MFReward, MFChoice, BiasAgent, MBReward
 from .data import two_step_mb_generator
 from .metrics import phase_accuracy_permuted, align_gamma
 from .models import SeriesHMMTinyMoARNN, SeriesHMMTinyRNN
 from .train import train_epoch_series, eval_epoch_series
-
-
-def default_agents():
-    return [
-        ("MFr", MFReward(alpha=0.3, decay=0.0)),
-        ("MFc", MFChoice(kappa=0.2, rho=0.0)),
-        ("MB", MBReward(p_common=0.7, alpha_state=0.2)),
-        ("Bias", BiasAgent(0.0, 0.0)),
-    ]
-
-
+from .trial_history import (
+    agent_action_sequences,
+    default_agent_suite,
+    summarise_trial_history,
+)
 def init_sticky(series_model, stay=0.97, eps=1e-3):
     with torch.no_grad():
         A = torch.tensor([[stay, 1 - stay], [1 - stay, stay]], device=series_model.hmm.log_A.device)
@@ -65,7 +58,7 @@ def maybe_cpu(tensor_or_none):
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg = eval_epoch_series(
+    loss, acc, gk, lg, pi_log = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -74,7 +67,7 @@ def evaluate_series(model, batch, agents=None):
     )
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
-    extras = {"gamma": gamma, "gating": gk}
+    extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
     if "states" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["states"])
         metrics.update(
@@ -143,7 +136,7 @@ def main():
     train_device = to_device(train_data, device)
     test_device = to_device(test_data, device)
 
-    agents = default_agents()
+    agents = default_agent_suite()
 
     print("[hmm-moa] fitting SeriesHMMTinyMoARNN")
     hmm_moa = SeriesHMMTinyMoARNN(
@@ -194,6 +187,35 @@ def main():
         f"[hmm-tinyrnn] test NLL={test_metrics_rnn['nll']:.3f}  "
         f"Acc={test_metrics_rnn['accuracy']:.3f}  "
         f"PhaseAcc={test_metrics_rnn.get('phase_accuracy', float('nan')):.3f}"
+    )
+
+    predictions = {
+        "SeriesHMM-TinyMoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+    }
+    agent_predictions = agent_action_sequences(default_agent_suite(), test_data)
+    predictions.update(agent_predictions)
+    history_results = summarise_trial_history(test_data, predictions=predictions, max_lag=5)
+    (args.out_dir / "trial_history.json").write_text(
+        json.dumps(
+            {
+                "lags": 5,
+                "series": [
+                    {
+                        "label": result.label,
+                        "reward": list(result.reward),
+                        "transition": list(result.transition),
+                        "interaction": list(result.interaction),
+                        "common_reward": list(result.common_reward),
+                        "common_omission": list(result.common_omission),
+                        "rare_reward": list(result.rare_reward),
+                        "rare_omission": list(result.rare_omission),
+                    }
+                    for result in history_results
+                ],
+            },
+            indent=2,
+        )
     )
 
 

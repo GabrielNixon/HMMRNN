@@ -1,18 +1,18 @@
-# Synthetic HMM-MoA vs TinyRNN Process
+# Synthetic SeriesHMM TinyMoA vs TinyRNN Process
 
-This note documents how the repository synthesises behavioural sequences, why the design mirrors the HMM-MoA paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
+This note documents how the repository synthesises behavioural sequences, why the design mirrors the SeriesHMM-TinyMoA (HMM-MoA) paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
 
 ![Generator overview](fig/synthetic_generation.svg)
 
 ## 1. Synthetic data generation
 
 ### 1.1 Objectives and rationale
-- **Match the HMM-MoA stimulus** – sequences emulate the two-step task with alternating “common” and “rare” transitions so that the HMM can infer latent phases representing model-free vs. model-based control modes.
+- **Match the SeriesHMM-TinyMoA stimulus** – sequences emulate the two-step task with alternating “common” and “rare” transitions so that the HMM can infer latent phases representing model-free vs. model-based control modes.
 - **Encourage long mode persistence** – sticky transitions create sustained blocks of each latent phase, making recovery by both HMM variants meaningful.
 - **Provide ground-truth supervision** – we record the latent phase labels alongside observable actions, rewards, and transition categories to validate phase recovery.
 
 ### 1.2 Generator pipeline
-1. **Phase sampling:** We initialise each sequence with a random phase and then draw contiguous blocks whose length is centred on the requested dwell time (default 120) with ±10 steps of jitter. This mirrors the quasi-deterministic regime used in the HMM-MoA work.【F:series_hmm_rnn/data.py†L4-L18】
+1. **Phase sampling:** We initialise each sequence with a random phase and then draw contiguous blocks whose length is centred on the requested dwell time (default 120) with ±10 steps of jitter. This mirrors the quasi-deterministic regime used in the SeriesHMM-TinyMoA work.【F:series_hmm_rnn/data.py†L4-L18】
 2. **Reward templates:** Each phase selects between two reward maps `R0` and `R1` that favour opposite first-stage actions, yielding a pair of Q-value templates conditioned on the latent phase.【F:series_hmm_rnn/data.py†L12-L16】
 3. **Policy mixture:** A softmax with inverse temperature `β` (default 3.5) samples actions from the mixture Q-values, blending common and rare transition expectations as in the task definition.【F:series_hmm_rnn/data.py†L16-L19】
 4. **Outcome sampling:** We simulate rare/common transitions and rewards based on the chosen action and latent state, returning `(actions, rewards, transitions, latent_states)` tensors for each batch element.【F:series_hmm_rnn/data.py†L19-L25】
@@ -28,7 +28,7 @@ The generator is invoked twice—once for training, once for testing—with inde
 - We train both models with Adam (`lr = 1e-3`) for a user-selected number of epochs (150 in the main experiment) on mini-batches comprising the entire synthetic dataset.【F:series_hmm_rnn/run_synthetic_pipeline.py†L120-L162】
 - The HMM parameters are initialised with a sticky transition matrix (stay probability 0.97) and small random symmetry breakers to encourage mode persistence, following the MoA paper’s strategy.【F:series_hmm_rnn/run_synthetic_pipeline.py†L21-L35】【F:series_hmm_rnn/run_synthetic_pipeline.py†L122-L129】
 
-### 2.2 HMM-MoA emission head
+### 2.2 SeriesHMM-TinyMoA emission head
 - **Agent ensemble:** Four agents (model-free reward, model-free choice, model-based reward, and bias) produce candidate Q-values, reproducing the mixture-of-agents formulation.【F:series_hmm_rnn/run_synthetic_pipeline.py†L13-L19】
 - **Gating network:** A learned linear head transforms the GRU state into agent weights (`Wg·h + b`) whose softmax drives the mixture; the resulting aggregate Q-values feed the HMM observation model.【F:series_hmm_rnn/models.py†L215-L245】
 - **Training target:** The negative log-likelihood combines the HMM forward–backward log probabilities with the emitted policy to match observed actions, while accuracy tracks correct first-stage choices.【F:series_hmm_rnn/train.py†L128-L188】

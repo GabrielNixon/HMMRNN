@@ -1,6 +1,6 @@
 # Real-data pipeline status
 
-We introduced `series_hmm_rnn.run_real_data_pipeline` to reproduce the HMM-MoA and HMM-TinyRNN experiments on behavioural sessions released in the [MixtureAgentsModels](https://github.com/BrodyJo/MixtureAgentsModels) repository. The tool expects a converted NumPy bundle (``.npz``) containing per-session action, reward, and transition sequences; an optional ``phases`` array enables permutation-invariant phase accuracy reporting.
+We introduced `series_hmm_rnn.run_real_data_pipeline` to reproduce the SeriesHMM-TinyMoA and SeriesHMM-TinyRNN experiments on behavioural sessions released in the [MixtureAgentsModels](https://github.com/BrodyJo/MixtureAgentsModels) repository. The tool expects a converted NumPy bundle (``.npz``) containing per-session action, reward, and transition sequences; an optional ``phases`` array enables permutation-invariant phase accuracy reporting.
 
 Due to network restrictions inside the execution environment we cannot download the original MATLAB files, so the run documented here uses only the synthetic smoke-test mode (``--demo-synthetic``). Replace that flag with ``--data path/to/converted_sessions.npz`` after preparing the real dataset locally.
 

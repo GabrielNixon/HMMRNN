@@ -31,6 +31,36 @@ python -m series_hmm_rnn.run_synthetic_pipeline --epochs 50 --B 16 --T 200 --out
 
 Add `--save-artifacts` if you also need checkpoints, posteriors, or datasets (kept out of git by default). 【F:results/results.md†L1-L40】
 
+## Demo real-data analysis
+
+The `results/real_data/demo` folder captures the smoke-test run of
+`series_hmm_rnn.run_real_data_pipeline` on a surrogate Mixture-of-Agents style
+dataset. Replace the bundle with your converted `.npz` export to reproduce the
+same reports on genuine behavioural data. 【F:results/real_data/README.md†L1-L62】
+
+### Trial-history regressions
+
+The plotting helper now emits per-series panels that normalise the logistic
+stay coefficients into the familiar *common/rare × reward/omission* layout. This
+makes it easy to verify whether each model matches the qualitative structure of
+the ground-truth agents. 【F:results/real_data/demo/trial_history.json†L1-L200】
+
+![Observed stay biases by transition and outcome](results/real_data/demo_fig/real_demo_trial_history_observed.svg)
+
+Additional panels for the fitted models and canonical agents live alongside the
+demo artefacts:
+
+- [SeriesHMM-TinyMoA](results/real_data/demo_fig/real_demo_trial_history_serieshmm_tinymoa.svg)
+- [SeriesHMM-TinyRNN](results/real_data/demo_fig/real_demo_trial_history_serieshmm_tinyrnn.svg)
+- [Canonical agents (MF reward/choice, model-based, bias)](results/real_data/demo_fig/real_demo_trial_history_agent_mf_reward.svg) — companion files with the `agent_*` suffix cover each policy.
+
+Use the plotting command below after running the pipeline to regenerate the
+figures for your dataset:
+
+```bash
+python scripts/plot_synthetic_results.py <run-dir> --out-dir <figure-dir> --prefix <name>
+```
+
 ## Quickstart
 
 ### End-to-end synthetic pipeline

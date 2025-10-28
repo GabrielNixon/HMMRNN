@@ -2,7 +2,7 @@
 
 This note documents how the repository synthesises behavioural sequences, why the design mirrors the HMM-MoA paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
 
-![Generator overview](fig/synthetic_generation.svg?raw=1)
+![Generator overview](fig/synthetic_generation.svg)
 
 ## 1. Synthetic data generation
 
@@ -21,7 +21,7 @@ The generator is invoked twice—once for training, once for testing—with inde
 
 ## 2. Training workflow
 
-![Model comparison](fig/model_comparison.svg?raw=1)
+![Model comparison](fig/model_comparison.svg)
 
 ### 2.1 Shared encoder and optimiser
 - A compact GRU encoder with hidden size 6 processes the action–reward–transition history for both emission heads.【F:series_hmm_rnn/models.py†L164-L199】【F:series_hmm_rnn/models.py†L247-L279】
@@ -29,7 +29,7 @@ The generator is invoked twice—once for training, once for testing—with inde
 - The HMM parameters are initialised with a sticky transition matrix (stay probability 0.97) and small random symmetry breakers to encourage mode persistence, following the MoA paper’s strategy.【F:series_hmm_rnn/run_synthetic_pipeline.py†L21-L35】【F:series_hmm_rnn/run_synthetic_pipeline.py†L122-L129】
 
 ### 2.2 HMM-MoA emission head
-- **Agent ensemble:** Four agents (Model-free value, Model-free choice, Model-based, and Bias) produce candidate Q-values, reproducing the mixture-of-agents formulation.【F:series_hmm_rnn/run_synthetic_pipeline.py†L13-L19】
+- **Agent ensemble:** Four agents (model-free reward, model-free choice, model-based reward, and bias) produce candidate Q-values, reproducing the mixture-of-agents formulation.【F:series_hmm_rnn/run_synthetic_pipeline.py†L13-L19】
 - **Gating network:** A learned linear head transforms the GRU state into agent weights (`Wg·h + b`) whose softmax drives the mixture; the resulting aggregate Q-values feed the HMM observation model.【F:series_hmm_rnn/models.py†L215-L245】
 - **Training target:** The negative log-likelihood combines the HMM forward–backward log probabilities with the emitted policy to match observed actions, while accuracy tracks correct first-stage choices.【F:series_hmm_rnn/train.py†L128-L188】
 

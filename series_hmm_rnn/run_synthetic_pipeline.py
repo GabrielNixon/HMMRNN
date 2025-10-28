@@ -13,9 +13,9 @@ from .train import train_epoch_series, eval_epoch_series
 
 def default_agents():
     return [
-        ("Model-free value", MFReward(alpha=0.3, decay=0.0)),
-        ("Model-free choice", MFChoice(kappa=0.2, rho=0.0)),
-        ("Model-based", MBReward(p_common=0.7, alpha_state=0.2)),
+        ("MFr", MFReward(alpha=0.3, decay=0.0)),
+        ("MFc", MFChoice(kappa=0.2, rho=0.0)),
+        ("MB", MBReward(p_common=0.7, alpha_state=0.2)),
         ("Bias", BiasAgent(0.0, 0.0)),
     ]
 
@@ -64,49 +64,8 @@ def maybe_cpu(tensor_or_none):
     return tensor_or_none.cpu()
 
 
-def tensor_first_sequence(tensor):
-    return tensor.detach().cpu()[0]
-
-
-def write_json(path: Path, payload):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2))
-
-
-def build_posterior_payload(label, extras, batch, metrics, agent_labels=None):
-    gamma = extras.get("aligned_gamma")
-    if gamma is None:
-        gamma = extras["gamma"]
-    payload = {
-        "label": label,
-        "posterior": tensor_first_sequence(gamma).tolist(),
-    }
-    if "states" in batch:
-        payload["states"] = tensor_first_sequence(batch["states"]).tolist()
-    obs = {}
-    for key in ("actions", "rewards", "transitions"):
-        if key in batch:
-            obs[key] = tensor_first_sequence(batch[key]).tolist()
-    if obs:
-        payload["observations"] = obs
-    if "pi_log" in extras:
-        payload["policy_logits"] = tensor_first_sequence(extras["pi_log"]).tolist()
-    gating = extras.get("gating")
-    if gating is not None:
-        payload["gating"] = tensor_first_sequence(gating).tolist()
-    agent_mix = extras.get("agent_mix")
-    if agent_mix is not None:
-        payload["agent_mixture"] = tensor_first_sequence(agent_mix).tolist()
-    if agent_labels is not None:
-        payload["agent_labels"] = list(agent_labels)
-    best_perm = metrics.get("best_permutation")
-    if best_perm is not None:
-        payload["best_permutation"] = best_perm
-    return payload
-
-
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg, pi_log = eval_epoch_series(
+    loss, acc, gk, lg = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -115,10 +74,7 @@ def evaluate_series(model, batch, agents=None):
     )
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
-    agent_mix = None
-    if gk is not None:
-        agent_mix = torch.einsum("btk,btkA->btA", gamma, gk)
-    extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log, "agent_mix": agent_mix}
+    extras = {"gamma": gamma, "gating": gk}
     if "states" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["states"])
         metrics.update(
@@ -148,12 +104,11 @@ def train_series_model(model, train_batch, epochs, lr, agents=None):
     return history
 
 
-def dump_training_artifacts(out_dir, model, history, eval_results, *, save_checkpoint=False):
+def dump_training_artifacts(out_dir, model, history, eval_results):
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "history.json").write_text(json.dumps(history, indent=2))
     (out_dir / "metrics.json").write_text(json.dumps(eval_results, indent=2))
-    if save_checkpoint:
-        torch.save({"state_dict": model.state_dict()}, out_dir / "model.pt")
+    torch.save({"state_dict": model.state_dict()}, out_dir / "model.pt")
 
 
 def main():
@@ -173,11 +128,6 @@ def main():
     parser.add_argument("--tau", type=float, default=1.25)
     parser.add_argument("--sticky", type=float, default=0.97)
     parser.add_argument("--device", type=str, default=None)
-    parser.add_argument(
-        "--save-artifacts",
-        action="store_true",
-        help="Persist binary artifacts such as datasets, checkpoints, and posterior dumps",
-    )
     args = parser.parse_args()
 
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -186,27 +136,9 @@ def main():
     print(f"[data] generating synthetic dataset (B={args.B}, T={args.T})")
     train_data = generate_dataset(args.B, args.T, args.dwell, args.beta, args.p_common, args.seed)
     test_data = generate_dataset(args.B, args.T, args.dwell, args.beta, args.p_common, args.seed + 1)
-    if args.save_artifacts:
-        data_dir = args.out_dir / "data"
-        save_tensor_dict(data_dir / "train.pt", train_data)
-        save_tensor_dict(data_dir / "test.pt", test_data)
-
-    sample_trace = {
-        "metadata": {
-            "B": args.B,
-            "T": args.T,
-            "dwell": args.dwell,
-            "beta": args.beta,
-            "p_common": args.p_common,
-            "seed_train": args.seed,
-            "seed_test": args.seed + 1,
-            "sticky": args.sticky,
-            "K": args.K,
-        },
-        "train": {k: tensor_first_sequence(v).tolist() for k, v in train_data.items()},
-        "test": {k: tensor_first_sequence(v).tolist() for k, v in test_data.items()},
-    }
-    write_json(args.out_dir / "sample_trace.json", sample_trace)
+    data_dir = args.out_dir / "data"
+    save_tensor_dict(data_dir / "train.pt", train_data)
+    save_tensor_dict(data_dir / "test.pt", test_data)
 
     train_device = to_device(train_data, device)
     test_device = to_device(test_data, device)
@@ -222,32 +154,17 @@ def main():
     train_metrics_moa, train_extras_moa = evaluate_series(hmm_moa, train_device, agents=agents)
     test_metrics_moa, test_extras_moa = evaluate_series(hmm_moa, test_device, agents=agents)
     results_moa = {"train": train_metrics_moa, "test": test_metrics_moa}
-    dump_training_artifacts(
-        args.out_dir / "hmm_moa",
-        hmm_moa,
-        history_moa,
-        results_moa,
-        save_checkpoint=args.save_artifacts,
+    dump_training_artifacts(args.out_dir / "hmm_moa", hmm_moa, history_moa, results_moa)
+    torch.save(
+        {
+            "gamma": test_extras_moa["gamma"].cpu(),
+            "aligned_gamma": maybe_cpu(test_extras_moa.get("aligned_gamma")),
+            "gating": maybe_cpu(test_extras_moa.get("gating")),
+            "states": test_device["states"].cpu(),
+            "best_permutation": test_metrics_moa.get("best_permutation"),
+        },
+        args.out_dir / "hmm_moa" / "posterior_test.pt",
     )
-    posterior_trace_moa = build_posterior_payload(
-        "SeriesHMM-TinyMoA",
-        test_extras_moa,
-        test_data,
-        test_metrics_moa,
-        agent_labels=[name for name, _ in agents],
-    )
-    write_json(args.out_dir / "hmm_moa" / "posterior_trace.json", posterior_trace_moa)
-    if args.save_artifacts:
-        torch.save(
-            {
-                "gamma": test_extras_moa["gamma"].cpu(),
-                "aligned_gamma": maybe_cpu(test_extras_moa.get("aligned_gamma")),
-                "gating": maybe_cpu(test_extras_moa.get("gating")),
-                "states": test_device["states"].cpu(),
-                "best_permutation": test_metrics_moa.get("best_permutation"),
-            },
-            args.out_dir / "hmm_moa" / "posterior_test.pt",
-        )
 
     print(
         f"[hmm-moa] test NLL={test_metrics_moa['nll']:.3f}  "
@@ -262,27 +179,16 @@ def main():
     train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=None)
     test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=None)
     results_rnn = {"train": train_metrics_rnn, "test": test_metrics_rnn}
-    dump_training_artifacts(
-        args.out_dir / "hmm_tinyrnn",
-        hmm_rnn,
-        history_rnn,
-        results_rnn,
-        save_checkpoint=args.save_artifacts,
+    dump_training_artifacts(args.out_dir / "hmm_tinyrnn", hmm_rnn, history_rnn, results_rnn)
+    torch.save(
+        {
+            "gamma": test_extras_rnn["gamma"].cpu(),
+            "aligned_gamma": maybe_cpu(test_extras_rnn.get("aligned_gamma")),
+            "states": test_device["states"].cpu(),
+            "best_permutation": test_metrics_rnn.get("best_permutation"),
+        },
+        args.out_dir / "hmm_tinyrnn" / "posterior_test.pt",
     )
-    posterior_trace_rnn = build_posterior_payload(
-        "SeriesHMM-TinyRNN", test_extras_rnn, test_data, test_metrics_rnn
-    )
-    write_json(args.out_dir / "hmm_tinyrnn" / "posterior_trace.json", posterior_trace_rnn)
-    if args.save_artifacts:
-        torch.save(
-            {
-                "gamma": test_extras_rnn["gamma"].cpu(),
-                "aligned_gamma": maybe_cpu(test_extras_rnn.get("aligned_gamma")),
-                "states": test_device["states"].cpu(),
-                "best_permutation": test_metrics_rnn.get("best_permutation"),
-            },
-            args.out_dir / "hmm_tinyrnn" / "posterior_test.pt",
-        )
 
     print(
         f"[hmm-tinyrnn] test NLL={test_metrics_rnn['nll']:.3f}  "

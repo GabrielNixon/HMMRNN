@@ -1,7 +1,5 @@
 # Synthetic HMM-MoA vs TinyRNN Results
 
-> **Quick link:** A consolidated overview that ties these logs to the rest of the repository now lives in [`../RESULTS.md`](../RESULTS.md).
-
 This run executes `series_hmm_rnn.run_synthetic_pipeline` with the following key arguments:
 
 - Epochs: 50
@@ -24,14 +22,6 @@ Textual logs for this run live under [`results/synthetic_run1/`](synthetic_run1/
 | HMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
 
 Confusion matrices for the phase alignment can be found in [`hmm_moa/metrics.json`](synthetic_run1/hmm_moa/metrics.json) and [`hmm_tinyrnn/metrics.json`](synthetic_run1/hmm_tinyrnn/metrics.json).
-
-## Visualisations
-
-The SVG summaries in [`visualizations.md`](visualizations.md) show training curves and split-wise accuracy comparisons for both models, including the agent-mixture plot with the **Model-free value**, **Model-free choice**, **Model-based**, and **Bias** labels. Regenerate them with:
-
-```
-python scripts/plot_synthetic_results.py results/synthetic_run1 --out-dir fig --prefix synthetic_run1
-```
 
 ## Reproducing
 

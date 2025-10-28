@@ -27,9 +27,6 @@ so the metrics reflect a surrogate long-dwell two-step generator; swapping in a 
 - [Training NLL](./demo_fig/real_demo_train_nll.svg) / [Training accuracy](./demo_fig/real_demo_train_accuracy.svg)
 - [Evaluation accuracy (train/test)](./demo_fig/real_demo_action_accuracy.svg) / [Phase alignment](./demo_fig/real_demo_phase_accuracy.svg)
 - [Latent posterior traces](./demo_fig/real_demo_hmm_moa_posterior.svg) and [TinyRNN posterior](./demo_fig/real_demo_hmm_tinyrnn_posterior.svg)
-- [HMM-MoA agent mixture weights](./demo_fig/real_demo_hmm_moa_agent_mixture.svg) showing the
-  per-trial contribution of the **Model-free value**, **Model-free choice**, **Model-based**, and
-  **Bias** agents.
 - [Trial-history regression (reward)](./demo_fig/real_demo_trial_history_reward.svg) /
   [choice](./demo_fig/real_demo_trial_history_choice.svg) /
   [choice × reward interaction](./demo_fig/real_demo_trial_history_interaction.svg)
@@ -37,10 +34,6 @@ so the metrics reflect a surrogate long-dwell two-step generator; swapping in a 
 The trial-history curves fit a simple logistic regression on sequences sampled from each
 model (arg-max policy) using the recorded rewards as proxies for outcomes, matching the
 conventions in the HMM-MoA literature.
-
-The MoA posterior export additionally records the per-trial mixture weights for each
-agent (`agent_mixture`) alongside the agent labels, enabling direct comparisons with the
-synthetic benchmark when quantifying how much each strategy contributes over time.
 
 ## Artefacts committed for reference
 

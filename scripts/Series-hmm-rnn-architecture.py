@@ -127,10 +127,10 @@ def synthetic_batch(B=32, T=100, p_reward=0.6, seed=0, device='cpu'):
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     agents = [
-        ('MFr', MFReward(alpha=0.3, decay=0.0)),
-        ('MFc', MFChoice(kappa=0.1, rho=0.0)),
-        ('MBc', MBCommonRareStub()),
-        ('MBr', MBCommonRareStub()),
+        ('Model-free value', MFReward(alpha=0.3, decay=0.0)),
+        ('Model-free choice', MFChoice(kappa=0.1, rho=0.0)),
+        ('Model-based common', MBCommonRareStub()),
+        ('Model-based rare', MBCommonRareStub()),
         ('Bias', BiasAgent(0.0, 0.0)),
     ]
     model = TinyMoARNN(n_agents=len(agents), hidden=2).to(device)
@@ -234,10 +234,10 @@ def eval_epoch_hmm(model, actions, rewards, transitions, agents):
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     agents = [
-        ('MFr', MFReward(alpha=0.3, decay=0.0)),
-        ('MFc', MFChoice(kappa=0.1, rho=0.0)),
-        ('MBc', MBCommonRareStub()),
-        ('MBr', MBCommonRareStub()),
+        ('Model-free value', MFReward(alpha=0.3, decay=0.0)),
+        ('Model-free choice', MFChoice(kappa=0.1, rho=0.0)),
+        ('Model-based common', MBCommonRareStub()),
+        ('Model-based rare', MBCommonRareStub()),
         ('Bias', BiasAgent(0.0, 0.0)),
     ]
     K = 2
@@ -273,10 +273,10 @@ def train_dual_main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     torch.manual_seed(args.seed)
     agents = [
-        ('MFr', MFReward(alpha=0.3, decay=0.0)),
-        ('MFc', MFChoice(kappa=0.1, rho=0.0)),
-        ('MBc', MBCommonRareStub()),
-        ('MBr', MBCommonRareStub()),
+        ('Model-free value', MFReward(alpha=0.3, decay=0.0)),
+        ('Model-free choice', MFChoice(kappa=0.1, rho=0.0)),
+        ('Model-based common', MBCommonRareStub()),
+        ('Model-based rare', MBCommonRareStub()),
         ('Bias', BiasAgent(0.0, 0.0)),
     ]
     if args.arch == 'tiny':

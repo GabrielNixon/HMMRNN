@@ -20,9 +20,9 @@ def run(epochs=150, B=64, T=400, hidden_tiny=2, hidden_series=6, K=2, lr=1e-3,
     if device is None: device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     agents = [
-        ('MFr', MFReward(alpha=0.3, decay=0.0)),
-        ('MFc', MFChoice(kappa=0.2, rho=0.0)),
-        ('MB',  MBReward(p_common=0.7, alpha_state=0.2)),
+        ('Model-free value', MFReward(alpha=0.3, decay=0.0)),
+        ('Model-free choice', MFChoice(kappa=0.2, rho=0.0)),
+        ('Model-based',  MBReward(p_common=0.7, alpha_state=0.2)),
         ('Bias', BiasAgent(0.0, 0.0)),
     ]
 

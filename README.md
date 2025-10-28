@@ -12,7 +12,7 @@ Hybrid **Hidden Markov Model + recurrent mixture-of-agents** tools for analysing
 
 ## Reproduced synthetic benchmark
 
-The repository includes a complete, text-only reproduction of the long-dwell two-step benchmark used throughout development. Aggregate metrics, confusion matrices, and figure links are gathered in [`RESULTS.md`](RESULTS.md). 【F:RESULTS.md†L1-L96】
+The repository includes a complete, text-only reproduction of the long-dwell two-step benchmark used throughout development. Aggregate metrics, confusion matrices, and figure links are gathered in [`RESULTS.md`](RESULTS.md). 【F:RESULTS.md†L1-L77】
 
 Headline numbers from the default run (`results/synthetic_run1`) are:
 
@@ -31,14 +31,6 @@ python -m series_hmm_rnn.run_synthetic_pipeline --epochs 50 --B 16 --T 200 --out
 
 Add `--save-artifacts` if you also need checkpoints, posteriors, or datasets (kept out of git by default). 【F:results/results.md†L1-L40】
 
-## Real-data demo artefacts
-
-A demo run of the real-data pipeline (executed with the synthetic stand-in shipped in this
-repository) lives in [`results/real_data/`](results/real_data/). The summary table and
-links to the committed SVG figures are available in
-[`results/real_data/README.md`](results/real_data/README.md), making it easy to compare
-against the synthetic benchmark.
-
 ## Quickstart
 
 ### End-to-end synthetic pipeline
@@ -56,23 +48,6 @@ python -m series_hmm_rnn.run_tiny_fit --epochs 10 --B 8 --T 120 --trace-out '' -
 ```
 
 Use `--plot-out` and `--history-out` to export per-epoch diagnostics for bespoke analyses. 【F:series_hmm_rnn/run_tiny_fit.py†L1-L354】
-
-### Real-data pipeline
-
-Prepare the MixtureAgentsModels behavioural exports with SciPy (see
-`scripts/convert_mixture_agents.py`) and then run:
-
-```bash
-python -m series_hmm_rnn.run_real_data_pipeline \
-  --data data/mixture_agents_sessions.npz \
-  --out-dir results/real_data/mixture_agents \
-  --epochs 150 \
-  --device cpu
-```
-
-Add `--demo-synthetic` when you just need a smoke test without the external
-dataset.  The command mirrors the synthetic workflow and writes JSON histories,
-metrics, and posterior traces to the requested output directory.
 
 ### Plotting existing runs
 

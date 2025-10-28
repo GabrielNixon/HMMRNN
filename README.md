@@ -49,23 +49,6 @@ python -m series_hmm_rnn.run_tiny_fit --epochs 10 --B 8 --T 120 --trace-out '' -
 
 Use `--plot-out` and `--history-out` to export per-epoch diagnostics for bespoke analyses. 【F:series_hmm_rnn/run_tiny_fit.py†L1-L354】
 
-### Real-data pipeline
-
-Prepare the MixtureAgentsModels behavioural exports with SciPy (see
-`scripts/convert_mixture_agents.py`) and then run:
-
-```bash
-python -m series_hmm_rnn.run_real_data_pipeline \
-  --data data/mixture_agents_sessions.npz \
-  --out-dir results/real_data/mixture_agents \
-  --epochs 150 \
-  --device cpu
-```
-
-Add `--demo-synthetic` when you just need a smoke test without the external
-dataset.  The command mirrors the synthetic workflow and writes JSON histories,
-metrics, and posterior traces to the requested output directory.
-
 ### Plotting existing runs
 
 ```bash

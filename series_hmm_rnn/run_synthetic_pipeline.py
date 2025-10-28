@@ -204,12 +204,8 @@ def main():
                     {
                         "label": result.label,
                         "reward": list(result.reward),
-                        "transition": list(result.transition),
+                        "choice": list(result.choice),
                         "interaction": list(result.interaction),
-                        "common_reward": list(result.common_reward),
-                        "common_omission": list(result.common_omission),
-                        "rare_reward": list(result.rare_reward),
-                        "rare_omission": list(result.rare_omission),
                     }
                     for result in history_results
                 ],

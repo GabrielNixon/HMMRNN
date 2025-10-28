@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360">
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<text x="360.0" y="24" text-anchor="middle" font-size="16" font-family="sans-serif">Trial-history regression (choice)</text>
+<text x="35.0" y="180.0" transform="rotate(-90 35.0,180.0)" text-anchor="middle" font-size="12" font-family="sans-serif">Coefficient</text>
+<line x1="70" y1="290" x2="640" y2="290" stroke="#000"/>
+<line x1="70" y1="50" x2="70" y2="290" stroke="#000"/>
+<line x1="70" y1="290.00" x2="640" y2="290.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="294.00" text-anchor="end" font-size="11" font-family="sans-serif">-0.928</text>
+<line x1="70" y1="230.00" x2="640" y2="230.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="234.00" text-anchor="end" font-size="11" font-family="sans-serif">0.411</text>
+<line x1="70" y1="170.00" x2="640" y2="170.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="174.00" text-anchor="end" font-size="11" font-family="sans-serif">1.75</text>
+<line x1="70" y1="110.00" x2="640" y2="110.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="114.00" text-anchor="end" font-size="11" font-family="sans-serif">3.09</text>
+<line x1="70" y1="50.00" x2="640" y2="50.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="54.00" text-anchor="end" font-size="11" font-family="sans-serif">4.43</text>
+<polyline fill="none" stroke="#4C78A8" stroke-width="2" points="70.00,260.70 212.50,247.42 355.00,244.62 497.50,250.62 640.00,248.80"/>
+<circle cx="70.00" cy="260.70" r="3" fill="#4C78A8"/>
+<circle cx="212.50" cy="247.42" r="3" fill="#4C78A8"/>
+<circle cx="355.00" cy="244.62" r="3" fill="#4C78A8"/>
+<circle cx="497.50" cy="250.62" r="3" fill="#4C78A8"/>
+<circle cx="640.00" cy="248.80" r="3" fill="#4C78A8"/>
+<polyline fill="none" stroke="#F58518" stroke-width="2" points="70.00,248.43 212.50,248.43 355.00,248.43 497.50,248.43 640.00,248.43"/>
+<circle cx="70.00" cy="248.43" r="3" fill="#F58518"/>
+<circle cx="212.50" cy="248.43" r="3" fill="#F58518"/>
+<circle cx="355.00" cy="248.43" r="3" fill="#F58518"/>
+<circle cx="497.50" cy="248.43" r="3" fill="#F58518"/>
+<circle cx="640.00" cy="248.43" r="3" fill="#F58518"/>
+<polyline fill="none" stroke="#54A24B" stroke-width="2" points="70.00,211.30 212.50,236.94 355.00,225.23 497.50,227.40 640.00,233.41"/>
+<circle cx="70.00" cy="211.30" r="3" fill="#54A24B"/>
+<circle cx="212.50" cy="236.94" r="3" fill="#54A24B"/>
+<circle cx="355.00" cy="225.23" r="3" fill="#54A24B"/>
+<circle cx="497.50" cy="227.40" r="3" fill="#54A24B"/>
+<circle cx="640.00" cy="233.41" r="3" fill="#54A24B"/>
+<polyline fill="none" stroke="#E45756" stroke-width="2" points="70.00,225.00 212.50,247.67 355.00,262.52 497.50,290.00 640.00,240.59"/>
+<circle cx="70.00" cy="225.00" r="3" fill="#E45756"/>
+<circle cx="212.50" cy="247.67" r="3" fill="#E45756"/>
+<circle cx="355.00" cy="262.52" r="3" fill="#E45756"/>
+<circle cx="497.50" cy="290.00" r="3" fill="#E45756"/>
+<circle cx="640.00" cy="240.59" r="3" fill="#E45756"/>
+<polyline fill="none" stroke="#72B7B2" stroke-width="2" points="70.00,248.43 212.50,248.43 355.00,248.43 497.50,248.43 640.00,248.43"/>
+<circle cx="70.00" cy="248.43" r="3" fill="#72B7B2"/>
+<circle cx="212.50" cy="248.43" r="3" fill="#72B7B2"/>
+<circle cx="355.00" cy="248.43" r="3" fill="#72B7B2"/>
+<circle cx="497.50" cy="248.43" r="3" fill="#72B7B2"/>
+<circle cx="640.00" cy="248.43" r="3" fill="#72B7B2"/>
+<polyline fill="none" stroke="#FF9DA6" stroke-width="2" points="70.00,50.00 212.50,141.79 355.00,181.37 497.50,203.81 640.00,218.46"/>
+<circle cx="70.00" cy="50.00" r="3" fill="#FF9DA6"/>
+<circle cx="212.50" cy="141.79" r="3" fill="#FF9DA6"/>
+<circle cx="355.00" cy="181.37" r="3" fill="#FF9DA6"/>
+<circle cx="497.50" cy="203.81" r="3" fill="#FF9DA6"/>
+<circle cx="640.00" cy="218.46" r="3" fill="#FF9DA6"/>
+<polyline fill="none" stroke="#9C755F" stroke-width="2" points="70.00,248.43 212.50,248.43 355.00,248.43 497.50,248.43 640.00,248.43"/>
+<circle cx="70.00" cy="248.43" r="3" fill="#9C755F"/>
+<circle cx="212.50" cy="248.43" r="3" fill="#9C755F"/>
+<circle cx="355.00" cy="248.43" r="3" fill="#9C755F"/>
+<circle cx="497.50" cy="248.43" r="3" fill="#9C755F"/>
+<circle cx="640.00" cy="248.43" r="3" fill="#9C755F"/>
+<rect x="80" y="60" width="12" height="12" fill="#4C78A8"/>
+<text x="98" y="70" font-size="11" font-family="sans-serif">Observed</text>
+<rect x="80" y="78" width="12" height="12" fill="#F58518"/>
+<text x="98" y="88" font-size="11" font-family="sans-serif">SeriesHMM-TinyMoA</text>
+<rect x="80" y="96" width="12" height="12" fill="#54A24B"/>
+<text x="98" y="106" font-size="11" font-family="sans-serif">SeriesHMM-TinyRNN</text>
+<rect x="80" y="114" width="12" height="12" fill="#E45756"/>
+<text x="98" y="124" font-size="11" font-family="sans-serif">Agent: MF Reward</text>
+<rect x="80" y="132" width="12" height="12" fill="#72B7B2"/>
+<text x="98" y="142" font-size="11" font-family="sans-serif">Agent: MF Choice</text>
+<rect x="80" y="150" width="12" height="12" fill="#FF9DA6"/>
+<text x="98" y="160" font-size="11" font-family="sans-serif">Agent: Model-based</text>
+<rect x="80" y="168" width="12" height="12" fill="#9C755F"/>
+<text x="98" y="178" font-size="11" font-family="sans-serif">Agent: Bias</text>
+<text x="70.00" y="308" text-anchor="middle" font-size="11" font-family="sans-serif">lag 1</text>
+<text x="212.50" y="308" text-anchor="middle" font-size="11" font-family="sans-serif">lag 2</text>
+<text x="355.00" y="308" text-anchor="middle" font-size="11" font-family="sans-serif">lag 3</text>
+<text x="497.50" y="308" text-anchor="middle" font-size="11" font-family="sans-serif">lag 4</text>
+<text x="640.00" y="308" text-anchor="middle" font-size="11" font-family="sans-serif">lag 5</text>
+</svg>

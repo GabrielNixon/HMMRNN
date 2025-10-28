@@ -40,6 +40,9 @@ Presents the posterior over hidden states for the TinyRNN agent trained on the s
 ## `real_demo_trial_history_observed.svg`
 ![real_demo_trial_history_observed](demo_fig/real_demo_trial_history_observed.svg)
 
+**Legend:**  
+🟥 **Common-Reward**  🟦 **Rare-Reward**  🟥 **Common-Omission (dashed)**  🟦 **Rare-Omission (dashed)** 
+
 Plots the regression-derived stay biases from the empirical choices, decomposed into common/rare transitions crossed with reward/omission outcomes. This is the ground-truth behavioural fingerprint against which model predictions are evaluated.
 
 ## `real_demo_trial_history_agent_bias.svg`

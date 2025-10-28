@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360">
+<rect x="0" y="0" width="640" height="360" fill="#ffffff"/>
+<text x="320.0" y="20" text-anchor="middle" font-size="16" font-family="sans-serif">Training Negative Log-Likelihood</text>
+<text x="30.0" y="180.0" transform="rotate(-90 30.0,180.0)" text-anchor="middle" font-size="12" font-family="sans-serif">NLL</text>
+<line x1="60" y1="310" x2="620" y2="310" stroke="#000"/>
+<line x1="60" y1="30" x2="60" y2="310" stroke="#000"/>
+<line x1="60.0" y1="30" x2="60.0" y2="310" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60.0" y="330" text-anchor="middle" font-size="11" font-family="sans-serif">1</text>
+<line x1="200.0" y1="30" x2="200.0" y2="310" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="200.0" y="330" text-anchor="middle" font-size="11" font-family="sans-serif">2</text>
+<line x1="340.0" y1="30" x2="340.0" y2="310" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="340.0" y="330" text-anchor="middle" font-size="11" font-family="sans-serif">3</text>
+<line x1="480.0" y1="30" x2="480.0" y2="310" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="480.0" y="330" text-anchor="middle" font-size="11" font-family="sans-serif">4</text>
+<line x1="620.0" y1="30" x2="620.0" y2="310" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="620.0" y="330" text-anchor="middle" font-size="11" font-family="sans-serif">5</text>
+<line x1="60" y1="310.0" x2="620" y2="310.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="50" y="314.0" text-anchor="end" font-size="11" font-family="sans-serif">0.658</text>
+<line x1="60" y1="240.0" x2="620" y2="240.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="50" y="244.0" text-anchor="end" font-size="11" font-family="sans-serif">0.730</text>
+<line x1="60" y1="170.0" x2="620" y2="170.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="50" y="174.0" text-anchor="end" font-size="11" font-family="sans-serif">0.802</text>
+<line x1="60" y1="100.0" x2="620" y2="100.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="50" y="104.0" text-anchor="end" font-size="11" font-family="sans-serif">0.873</text>
+<line x1="60" y1="30.0" x2="620" y2="30.0" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="50" y="34.0" text-anchor="end" font-size="11" font-family="sans-serif">0.945</text>
+<polyline fill="none" stroke="#4C78A8" stroke-width="2" points="60.00,30.00 200.00,34.89 340.00,39.76 480.00,44.59 620.00,49.40"/>
+<circle cx="60.00" cy="30.00" r="3" fill="#4C78A8"/>
+<circle cx="200.00" cy="34.89" r="3" fill="#4C78A8"/>
+<circle cx="340.00" cy="39.76" r="3" fill="#4C78A8"/>
+<circle cx="480.00" cy="44.59" r="3" fill="#4C78A8"/>
+<circle cx="620.00" cy="49.40" r="3" fill="#4C78A8"/>
+<polyline fill="none" stroke="#F58518" stroke-width="2" points="60.00,300.05 200.00,302.59 340.00,305.09 480.00,307.56 620.00,310.00"/>
+<circle cx="60.00" cy="300.05" r="3" fill="#F58518"/>
+<circle cx="200.00" cy="302.59" r="3" fill="#F58518"/>
+<circle cx="340.00" cy="305.09" r="3" fill="#F58518"/>
+<circle cx="480.00" cy="307.56" r="3" fill="#F58518"/>
+<circle cx="620.00" cy="310.00" r="3" fill="#F58518"/>
+<rect x="70" y="40" width="12" height="12" fill="#4C78A8"/>
+<text x="88" y="50" font-size="11" font-family="sans-serif">Hmm Moa</text>
+<rect x="70" y="58" width="12" height="12" fill="#F58518"/>
+<text x="88" y="68" font-size="11" font-family="sans-serif">Hmm Tinyrnn</text>
+</svg>

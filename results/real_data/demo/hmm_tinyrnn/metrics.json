@@ -1,0 +1,40 @@
+{
+  "train": {
+    "nll": 0.6556820869445801,
+    "accuracy": 0.528333306312561,
+    "phase_accuracy": 0.935,
+    "best_permutation": [
+      1,
+      0
+    ],
+    "confusion": [
+      [
+        3,
+        193
+      ],
+      [
+        368,
+        36
+      ]
+    ]
+  },
+  "test": {
+    "nll": 0.6670179963111877,
+    "accuracy": 0.49000000953674316,
+    "phase_accuracy": 0.935,
+    "best_permutation": [
+      1,
+      0
+    ],
+    "confusion": [
+      [
+        2,
+        62
+      ],
+      [
+        125,
+        11
+      ]
+    ]
+  }
+}

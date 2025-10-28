@@ -18,10 +18,10 @@ Headline numbers from the default run (`results/synthetic_run1`) are:
 
 | Model | Split | NLL | Action acc. | Phase acc. |
 | --- | --- | --- | --- | --- |
-| HMM-MoA | Train | 0.804 | 0.548 | 0.538 |
-| HMM-MoA | Test | 0.817 | 0.553 | 0.528 |
-| HMM-TinyRNN | Train | 0.586 | 0.735 | 0.993 |
-| HMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
+| SeriesHMM-TinyMoA | Train | 0.804 | 0.548 | 0.538 |
+| SeriesHMM-TinyMoA | Test | 0.817 | 0.553 | 0.528 |
+| SeriesHMM-TinyRNN | Train | 0.586 | 0.735 | 0.993 |
+| SeriesHMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
 
 Regenerate them with:
 

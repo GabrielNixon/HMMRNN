@@ -1,0 +1,13 @@
+# Generated experiment artefacts
+results/**/data/
+results/**/*.pt
+results/**/*.pth
+results/**/*.bin
+results/**/*.ckpt
+results/**/*.svg
+!results/real_data/demo_fig/*.svg
+results/**/*.png
+results/**/*.pdf
+
+# Local copies of external datasets
+data/

@@ -20,9 +20,9 @@ def run(epochs=150, B=64, T=400, hidden_tiny=2, hidden_series=6, K=2, lr=1e-3,
     if device is None: device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     agents = [
-        ('MFr', MFReward(alpha=0.3, decay=0.0)),
-        ('MFc', MFChoice(kappa=0.2, rho=0.0)),
-        ('MB',  MBReward(p_common=0.7, alpha_state=0.2)),
+        ('Model-free value', MFReward(alpha=0.3, decay=0.0)),
+        ('Model-free choice', MFChoice(kappa=0.2, rho=0.0)),
+        ('Model-based',  MBReward(p_common=0.7, alpha_state=0.2)),
         ('Bias', BiasAgent(0.0, 0.0)),
     ]
 
@@ -41,7 +41,7 @@ def run(epochs=150, B=64, T=400, hidden_tiny=2, hidden_series=6, K=2, lr=1e-3,
     opt_s = torch.optim.Adam(series.parameters(), lr=lr)
     for _ in range(epochs):
         train_epoch_series(series, opt_s, a_tr, r_tr, t_tr, agents)
-    s_loss, s_acc, gk, lg = eval_epoch_series(series, a_te, r_te, t_te, agents)
+    s_loss, s_acc, gk, lg, _ = eval_epoch_series(series, a_te, r_te, t_te, agents)
     gamma = torch.softmax(lg, dim=-1)
     phase_acc_perm, best_perm, _ = phase_accuracy_permuted(gamma, s_te)
     print(f"Series-> NLL: {s_loss:.3f}  Acc: {s_acc:.3f}  PhaseAcc_perm: {phase_acc_perm:.3f}  Perm {best_perm}")

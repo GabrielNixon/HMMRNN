@@ -3,8 +3,8 @@ optim: {lr: 1e-3}
 data: {batch: 64, T: 200}
 train: {epochs: 10}
 agents:
-  - {name: MFr, type: MFReward, alpha: 0.3, decay: 0.0}
-  - {name: MFc, type: MFChoice, kappa: 0.1, rho: 0.0}
-  - {name: MBc, type: MBStub}
-  - {name: MBr, type: MBStub}
+  - {name: Model-free value, type: MFReward, alpha: 0.3, decay: 0.0}
+  - {name: Model-free choice, type: MFChoice, kappa: 0.1, rho: 0.0}
+  - {name: Model-based common, type: MBStub}
+  - {name: Model-based rare, type: MBStub}
   - {name: Bias, type: Bias, bias_left: 0.0, bias_right: 0.0}

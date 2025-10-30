@@ -28,6 +28,33 @@ Four trajectories = MoA experts (MF-reward, MF-choice, Model-based, Bias). Value
 - Model-based controls **154/200** trials; **MF-choice** covers **46/200**. **Bias** and **MF-reward** never become top-responsibility.
 - Session averages: **MF-R 0.11**, **MF-C 0.17**, **MB 0.43**, **Bias 0.29** — a planner-vs-choice tug-of-war with a supportive bias component. 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
+**How it’s computed (what you did)**
+
+- **Inputs (from `posterior_trace.json`):**
+  - Per-trial **phase posteriors**: `gamma[t][p] = P(z_t = p | data)` for each trial `t` and phase `p`.
+  - **Per-phase agent weights** (TinyMoA): `w[p] = { MF-R, MF-C, MB, Bias }` (non-negative, sum to 1).
+
+- **Trial-wise agent responsibilities:** for each trial `t` and agent `a`, r[t][a] = sum_p( gamma[t][p] * w[p][a] )
+
+This is the expectation of the phase-specific agent mix under the phase posterior.
+By construction, `sum_a r[t][a] = 1` at every trial.
+
+- **What’s plotted:** the four curves t ↦ r[t][MF-R], r[t][MF-C], r[t][MB], r[t][Bias]
+
+- **Bottom band (dominant expert):** at each trial, top_agent[t] = argmax_a r[t][a]
+
+and color the band by `top_agent[t]`.
+
+- **Summary numbers you report:**
+- **Averages:** `avg[a] = (1/T) * sum_{t=1..T} r[t][a]`
+- **Dominance counts:** number of trials where `a = argmax_a r[t][a]`
+
+Source for inputs: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
+
+
+
+
+
 ---
 
 ## TinyRNN projected agent responsibility (`real_demo_agent_mix_projected_hmm_tinyrnn.svg`)

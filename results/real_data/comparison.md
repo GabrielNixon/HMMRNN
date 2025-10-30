@@ -6,13 +6,12 @@ This note condenses figures under `results/real_data/demo_fig` to show how the h
 
 ## TL;DR
 
-| View | What | Averages | Dominance counts | Cross-model links |
+| View | What | Averages | Dominance counts | 
 |---|---|---|---|---|
-| **TinyMoA (agent mix)** | MF-R / MF-C / MB / Bias | **0.11 / 0.17 / 0.43 / 0.29** | **MB 154**, **MF-C 46** (Bias/MF-R never top) | Planner–vs–Choice tussle; Bias contributes but rarely leads. |
-| **TinyRNN → projected agents** | MF-R / MF-C / MB / Bias | **0.16 / 0.43 / 0.27 / 0.15** | **MF-C 149**, **MB 51** | Projection preserves MoA regimes with smoother transitions. |
-| **TinyMoA (state posterior)** | Phase 1 / Phase 2 | **~0.74 / ~0.26** | One clear mid-session Phase-2 block | Agent switches coincide with state excursions. |
-| **TinyRNN (state posterior)** | Phase 1 / Phase 2 | **~0.25 / ~0.75** | Phase-2 dominates late trials | Highlights trials where models disagree on regime. |
-
+| **TinyMoA (agent mix)** | MF-R / MF-C / MB / Bias | **0.11 / 0.17 / 0.43 / 0.29** | **MB 154**, **MF-C 46** (Bias/MF-R never top) |
+| **TinyRNN → projected agents** | MF-R / MF-C / MB / Bias | **0.16 / 0.43 / 0.27 / 0.15** | **MF-C 149**, **MB 51** | 
+| **TinyMoA (state posterior)** | Phase 1 / Phase 2 | **~0.74 / ~0.26** | One clear mid-session Phase-2 block | 
+| **TinyRNN (state posterior)** | Phase 1 / Phase 2 | **~0.25 / ~0.75** | Phase-2 dominates late trials |
 > Exact numbers and references are cited in the sections below.
 
 ---

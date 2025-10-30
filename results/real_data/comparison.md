@@ -1,4 +1,4 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+(cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/results/real_data/comparison.md b/results/real_data/comparison.md
 index 514d75e699f55440603af27be075f1d51453e455..7d4b49326a539629b39242a0e598a16827dce9bd 100644
 --- a/results/real_data/comparison.md

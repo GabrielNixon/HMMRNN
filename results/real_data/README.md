@@ -26,10 +26,6 @@ so the metrics reflect a surrogate long-dwell two-step generator; swapping in a 
 
 - [Training NLL](./demo_fig/real_demo_train_nll.svg) / [Training accuracy](./demo_fig/real_demo_train_accuracy.svg)
 - [Evaluation accuracy (train/test)](./demo_fig/real_demo_action_accuracy.svg) / [Phase alignment](./demo_fig/real_demo_phase_accuracy.svg)
-- [Latent posterior traces](./demo_fig/real_demo_hmm_moa_posterior.svg) and [TinyRNN posterior](./demo_fig/real_demo_hmm_tinyrnn_posterior.svg)
-- [Trial-history regression (reward)](./demo_fig/real_demo_trial_history_reward.svg) /
-  [choice](./demo_fig/real_demo_trial_history_choice.svg) /
-  [choice × reward interaction](./demo_fig/real_demo_trial_history_interaction.svg) —
   overlays observed behaviour, both SeriesHMM models, and the four constituent agents.
 
 The trial-history curves fit a simple logistic regression on sequences sampled from each

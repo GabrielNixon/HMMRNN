@@ -79,22 +79,26 @@ Precomputed series & stats:
 【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1-L1214】  
 MoA reference for alignment: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
+
 ### How the latent-state **posterior** is computed (tiny primer)
 
-- For each trial `\(t\)` and phase `\(p\)`, the model can score how likely the observed action was **if** we were in phase `\(p\):  
-  \(L_t(p) = p(a_t \mid z_t=p, \text{history}_t)\)`.  
-  - **TinyMoA:** `\(L_t(p)\)` comes from the **phase-specific agent mixture** `(MB/MF/etc. with weights \(w^{(p)}\))`.  
-  - **TinyRNN:** `\(L_t(p)\)` comes from the RNN head conditioned on phase `\(p\)`.
+- For each trial $t$ and phase $p$, the model scores how likely the observed action was **if** we were in phase $p$:
+  $$L_t(p) = p\!\big(a_t \mid z_t=p,\ \text{history}_t\big).$$
+  - **TinyMoA:** $L_t(p)$ comes from the **phase-specific agent mixture** (MB/MF/etc. with weights $w^{(p)}$).
+  - **TinyRNN:** $L_t(p)$ comes from the RNN head conditioned on phase $p$.
 
 - We then run the standard **forward–backward** pass of an HMM to combine **past** and **future** evidence:
-  - **Forward (filtering):**  
-    `\(\alpha_t(p) \propto L_t(p)\, \sum_q \alpha_{t-1}(q)\,T_{q p}\), with \(\alpha_1(p)\propto \pi_p\,L_1(p)\)`.
-  - **Backward (smoothing):**  
-    `\(\beta_t(p) \propto \sum_q T_{p q}\, L_{t+1}(q)\,\beta_{t+1}(q)\), with \(\beta_T(p)=1\)`.
+  - **Forward (filtering):**
+    $$\alpha_t(p)\ \propto\ L_t(p)\,\sum_q \alpha_{t-1}(q)\,T_{q p}, \qquad
+      \alpha_1(p)\ \propto\ \pi_p\,L_1(p).$$
+  - **Backward (smoothing):**
+    $$\beta_t(p)\ \propto\ \sum_q T_{p q}\,L_{t+1}(q)\,\beta_{t+1}(q), \qquad
+      \beta_T(p)=1.$$
 
-- **Posterior over phases at trial \(t\):**  
-  `\(\displaystyle \gamma_t(p)=\frac{\alpha_t(p)\,\beta_t(p)}{\sum_r \alpha_t(r)\,\beta_t(r)}\)`.  
-  (These are the values plotted as stacked areas in the two figures below. With 2 phases, the plot shows `\(\gamma_t(\text{Phase 1})\) and \(1-\gamma_t(\text{Phase 1})\)`.)
+- **Posterior over phases at trial $t$:**
+  $$\gamma_t(p)=\frac{\alpha_t(p)\,\beta_t(p)}{\sum_r \alpha_t(r)\,\beta_t(r)}.$$
+  (These are the values plotted as stacked areas below. With 2 phases, the plot shows
+  $\gamma_t(\text{Phase 1})$ and $1-\gamma_t(\text{Phase 1})$.)
 
 ---
 

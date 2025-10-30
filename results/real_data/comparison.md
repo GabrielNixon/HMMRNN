@@ -80,7 +80,7 @@ Precomputed series & stats:
 MoA reference for alignment: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
 
-### How the latent-state **posterior** is computed (tiny primer)
+### How the latent-state **posterior** is computed
 
 - For each trial $t$ and phase $p$, the model scores how likely the observed action was **if** we were in phase $p$:
   $$L_t(p) = p\!\big(a_t \mid z_t=p,\ \text{history}_t\big).$$

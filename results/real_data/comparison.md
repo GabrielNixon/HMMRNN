@@ -42,18 +42,6 @@ strongly with the bias responsibility (r ≈ 0.76).【423ce9†L1-L8】 Together
 statistics confirm that the TinyRNN moves through modes that shadow the
 Mixture-of-Agents decomposition rather than inventing entirely new dynamics.
 
-To make the comparison one-to-one with the TinyMoA breakdown, we project the
-TinyRNN phase posterior onto the MoA agent space by aligning the neural phases to
-the MoA latent states (permutation = [0, 1]) and taking the expectation of the
-MoA per-phase agent weights under the TinyRNN responsibilities. The resulting
-agent mix averages 0.20 MF reward, 0.24 MF choice, 0.31 model-based, and 0.24
-bias responsibility across the session, so the recurrent head preserves the
-planning-versus-bias tug-of-war despite smoothing the transitions.【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1215-L1219】
-Trial-by-trial maxima show the projected TinyRNN controller selects the
-model-based expert on 158 trials and the bias head on the remaining 42, with no
-windows dominated by the model-free specialists, echoing the dominance pattern in
-the MoA trace but with slightly longer model-based stretches.【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1221-L1225】
-
 ## TinyMoA latent-state posterior (`real_demo_state_posterior_serieshmm_tinymoa.svg`)
 
 ![SeriesHMM-TinyMoA state posterior](./demo_fig/real_demo_state_posterior_serieshmm_tinymoa.svg)

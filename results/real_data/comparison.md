@@ -64,9 +64,9 @@ To compare one-to-one with TinyMoA, we project the TinyRNN phase posterior into 
   - TinyMoA **per-phase agent weights**: `w[p] = { MF-R, MF-C, MB, Bias }`  
     (same weights used for the MoA agent-mix; rows sum to 1).
 
-- **Phase alignment (optional but recommended):**
-  - Choose a permutation to line up TinyRNN phases with MoA phases (you used `[0, 1]`).
-  - Apply it to `gamma_rnn[t][p]` before projection if needed.
+- **Phase alignment:**
+  - Choose a permutation to line up TinyRNN phases with MoA phases (used `[0, 1]`).
+  - Apply it to `gamma_rnn[t][p]` before projection.
 
 - **Projected agent responsibilities:** for each trial `t` and agent `a`, `r_proj[t][a] = sum_p( gamma_rnn[t][p] * w[p][a] )`
 This is the expectation of the MoA per-phase agent mix under the **TinyRNN** phase responsibilities.  

@@ -376,13 +376,15 @@ def collect_runs(run_dir: Path) -> List[Mapping[str, object]]:
         metrics_path = subdir / "metrics.json"
         if not (history_path.exists() and metrics_path.exists()):
             continue
-        runs.append(
-            {
-                "label": subdir.name.replace("_", " ").title(),
-                "history": load_history(history_path),
-                "metrics": load_metrics(metrics_path),
-            }
-        )
+        entry = {
+            "label": subdir.name.replace("_", " ").title(),
+            "history": load_history(history_path),
+            "metrics": load_metrics(metrics_path),
+        }
+        posterior_path = subdir / "posterior_trace.json"
+        if posterior_path.exists():
+            entry["posterior"] = load_posterior_trace(posterior_path)
+        runs.append(entry)
     if not runs:
         raise FileNotFoundError(
             f"No runs with history.json/metrics.json found under {run_dir}"

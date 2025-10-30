@@ -28,7 +28,7 @@ Four trajectories = MoA experts (MF-reward, MF-choice, Model-based, Bias). Value
 - Model-based controls **154/200** trials; **MF-choice** covers **46/200**. **Bias** and **MF-reward** never become top-responsibility.
 - Session averages: **MF-R 0.11**, **MF-C 0.17**, **MB 0.43**, **Bias 0.29** — a planner-vs-choice tug-of-war with a supportive bias component. 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
-**How it’s computed (what you did)**
+**How it’s computed**
 
 - **Inputs (from `posterior_trace.json`):**
   - Per-trial **phase posteriors**: `gamma[t][p] = P(z_t = p | data)` for each trial `t` and phase `p`.

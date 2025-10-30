@@ -97,7 +97,7 @@ def write_json(path: Path, payload) -> None:
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg, pi_log, Q_seq = eval_epoch_series(
+    loss, acc, gk, lg, pi_log = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -107,8 +107,6 @@ def evaluate_series(model, batch, agents=None):
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
     extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
-    if Q_seq is not None:
-        extras["baseline_q"] = Q_seq
     if "phases" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["phases"])
         metrics.update(
@@ -307,6 +305,30 @@ def main():
                     "common_omission": list(result.common_omission),
                     "rare_reward": list(result.rare_reward),
                     "rare_omission": list(result.rare_omission),
+                }
+                for result in history_results
+            ],
+        },
+    )
+
+    # Trial-history regressions (observed vs models vs individual agents)
+    predictions = {
+        "SeriesHMM-TinyMoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+    }
+    agent_predictions = agent_action_sequences(agent_suite, test_batch)
+    predictions.update(agent_predictions)
+    history_results = summarise_trial_history(test_batch, predictions=predictions, max_lag=5)
+    write_json(
+        args.out_dir / "trial_history.json",
+        {
+            "lags": 5,
+            "series": [
+                {
+                    "label": result.label,
+                    "reward": list(result.reward),
+                    "choice": list(result.choice),
+                    "interaction": list(result.interaction),
                 }
                 for result in history_results
             ],

@@ -1,13 +1,13 @@
-# Synthetic HMM-MoA vs HMM-TinyRNN Process
+# Synthetic SeriesHMM TinyMoA vs TinyRNN Process
 
-This note documents how the repository synthesises behavioural sequences, why the design mirrors the HMM-MoA (SeriesHMM TinyMoA) paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
+This note documents how the repository synthesises behavioural sequences, why the design mirrors the SeriesHMM-TinyMoA (HMM-MoA) paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
 
 ![Generator overview](fig/synthetic_generation.svg)
 
 ## 1. Synthetic data generation
 
 ### 1.1 Objectives and rationale
-- **Match the HMM-MoA stimulus** – sequences emulate the two-step task with alternating “common” and “rare” transitions so that the HMM can infer latent phases representing model-free vs. model-based control modes.
+- **Match the SeriesHMM-TinyMoA stimulus** – sequences emulate the two-step task with alternating “common” and “rare” transitions so that the HMM can infer latent phases representing model-free vs. model-based control modes.
 - **Encourage long mode persistence** – sticky transitions create sustained blocks of each latent phase, making recovery by both HMM variants meaningful.
 - **Provide ground-truth supervision** – we record the latent phase labels alongside observable actions, rewards, and transition categories to validate phase recovery.
 
@@ -28,7 +28,7 @@ The generator is invoked twice—once for training, once for testing—with inde
 - We train both models with Adam (`lr = 1e-3`) for a user-selected number of epochs (150 in the main experiment) on mini-batches comprising the entire synthetic dataset.【F:series_hmm_rnn/run_synthetic_pipeline.py†L120-L162】
 - The HMM parameters are initialised with a sticky transition matrix (stay probability 0.97) and small random symmetry breakers to encourage mode persistence, following the MoA paper’s strategy.【F:series_hmm_rnn/run_synthetic_pipeline.py†L21-L35】【F:series_hmm_rnn/run_synthetic_pipeline.py†L122-L129】
 
-### 2.2 HMM-MoA emission head
+### 2.2 SeriesHMM-TinyMoA emission head
 - **Agent ensemble:** Four agents (model-free reward, model-free choice, model-based reward, and bias) produce candidate Q-values, reproducing the mixture-of-agents formulation.【F:series_hmm_rnn/run_synthetic_pipeline.py†L13-L19】
 - **Gating network:** A learned linear head transforms the GRU state into agent weights (`Wg·h + b`) whose softmax drives the mixture; the resulting aggregate Q-values feed the HMM observation model.【F:series_hmm_rnn/models.py†L215-L245】
 - **Training target:** The negative log-likelihood combines the HMM forward–backward log probabilities with the emitted policy to match observed actions, while accuracy tracks correct first-stage choices.【F:series_hmm_rnn/train.py†L128-L188】

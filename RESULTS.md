@@ -6,8 +6,8 @@ only visualisations that can be regenerated directly from source.
 
 ## Experiments in scope
 
-- **HMM-MoA** (mixture-of-agents emissions; implemented by `SeriesHMMTinyMoARNN`) trained on the long-dwell two-step generator.
-- **HMM-TinyRNN** (smooth recurrent emissions; implemented by `SeriesHMMTinyRNN`) trained on the same dataset with shared hyperparameters.
+- **SeriesHMM-TinyMoA** (mixture-of-agents emissions, historically referred to as HMM-MoA) trained on the long-dwell two-step generator.
+- **SeriesHMM-TinyRNN** (smooth recurrent emissions) trained on the same dataset with shared hyperparameters.
 - Supporting TinyMoA-only fits for debugging, and the plotting scripts that convert JSON logs into SVG figures.
 
 The pipeline that orchestrates the dataset synthesis, training, and logging lives in
@@ -17,10 +17,10 @@ The pipeline that orchestrates the dataset synthesis, training, and logging live
 
 | Model | Split | NLL | Action accuracy | Phase accuracy |
 | --- | --- | --- | --- | --- |
-| HMM-MoA | Train | 0.804 | 0.548 | 0.538 |
-| HMM-MoA | Test | 0.817 | 0.553 | 0.528 |
-| HMM-TinyRNN | Train | 0.586 | 0.735 | 0.993 |
-| HMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
+| SeriesHMM-TinyMoA | Train | 0.804 | 0.548 | 0.538 |
+| SeriesHMM-TinyMoA | Test | 0.817 | 0.553 | 0.528 |
+| SeriesHMM-TinyRNN | Train | 0.586 | 0.735 | 0.993 |
+| SeriesHMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
 
 These numbers are consolidated from [`results/results.md`](results/results.md), which in turn is derived from the JSON metrics
 dumped by the pipeline. 【F:results/results.md†L1-L40】
@@ -60,5 +60,5 @@ dumped by the pipeline. 【F:results/results.md†L1-L40】
 
    Use `--plot-out` or `--history-out` when you need richer per-epoch traces. 【F:series_hmm_rnn/run_tiny_fit.py†L1-L354】
 
-With this collation in place, the main branch exposes the entire HMM-MoA vs HMM-TinyRNN workflow — models,
+With this collation in place, the main branch exposes the entire SeriesHMM-TinyMoA vs SeriesHMM-TinyRNN workflow — models,
 training scripts, metrics, and figures — through text files that remain compatible with lightweight review tooling.

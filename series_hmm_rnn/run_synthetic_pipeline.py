@@ -58,7 +58,7 @@ def maybe_cpu(tensor_or_none):
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg, pi_log, Q_seq = eval_epoch_series(
+    loss, acc, gk, lg, pi_log = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -68,8 +68,6 @@ def evaluate_series(model, batch, agents=None):
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
     extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
-    if Q_seq is not None:
-        extras["baseline_q"] = Q_seq
     if "states" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["states"])
         metrics.update(
@@ -192,8 +190,8 @@ def main():
     )
 
     predictions = {
-        "HMM-MoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
-        "HMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyMoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
     }
     agent_predictions = agent_action_sequences(default_agent_suite(), test_data)
     predictions.update(agent_predictions)
@@ -206,12 +204,8 @@ def main():
                     {
                         "label": result.label,
                         "reward": list(result.reward),
-                        "transition": list(result.transition),
+                        "choice": list(result.choice),
                         "interaction": list(result.interaction),
-                        "common_reward": list(result.common_reward),
-                        "common_omission": list(result.common_omission),
-                        "rare_reward": list(result.rare_reward),
-                        "rare_omission": list(result.rare_omission),
                     }
                     for result in history_results
                 ],

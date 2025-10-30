@@ -97,7 +97,7 @@ def write_json(path: Path, payload) -> None:
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg, pi_log = eval_epoch_series(
+    loss, acc, gk, lg, pi_log, baseline_q = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -107,6 +107,8 @@ def evaluate_series(model, batch, agents=None):
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
     extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
+    if baseline_q is not None:
+        extras["baseline_q"] = baseline_q
     if "phases" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["phases"])
         metrics.update(
@@ -281,34 +283,6 @@ def main():
     write_json(
         args.out_dir / "hmm_tinyrnn" / "posterior_trace.json",
         posterior_payload("HMM-TinyRNN", test_extras_rnn, test_batch, test_metrics_rnn),
-    )
-
-    # Trial-history regressions (observed vs models vs individual agents)
-    predictions = {
-        "HMM-MoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
-        "HMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
-    }
-    agent_predictions = agent_action_sequences(agent_suite, test_batch)
-    predictions.update(agent_predictions)
-    history_results = summarise_trial_history(test_batch, predictions=predictions, max_lag=5)
-    write_json(
-        args.out_dir / "trial_history.json",
-        {
-            "lags": 5,
-            "series": [
-                {
-                    "label": result.label,
-                    "reward": list(result.reward),
-                    "transition": list(result.transition),
-                    "interaction": list(result.interaction),
-                    "common_reward": list(result.common_reward),
-                    "common_omission": list(result.common_omission),
-                    "rare_reward": list(result.rare_reward),
-                    "rare_omission": list(result.rare_omission),
-                }
-                for result in history_results
-            ],
-        },
     )
 
     # Trial-history regressions (observed vs models vs individual agents)

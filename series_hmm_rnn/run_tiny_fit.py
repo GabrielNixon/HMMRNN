@@ -18,25 +18,12 @@ from typing import List, Mapping, Sequence, Tuple
 
 import torch
 
-from . import (
-    BiasAgent,
-    MBReward,
-    MFChoice,
-    MFReward,
-    TinyMoARNN,
-    eval_epoch_tiny,
-    train_epoch_tiny,
-    two_step_mb_generator,
-)
+from . import TinyMoARNN, eval_epoch_tiny, train_epoch_tiny, two_step_mb_generator
+from .trial_history import default_agent_suite
 
 
 def _default_agents():
-    return [
-        ("MFr", MFReward(alpha=0.3, decay=0.0)),
-        ("MFc", MFChoice(kappa=0.2, rho=0.0)),
-        ("MB", MBReward(p_common=0.7, alpha_state=0.2)),
-        ("Bias", BiasAgent(0.0, 0.0)),
-    ]
+    return default_agent_suite()
 
 
 def _export_trace(

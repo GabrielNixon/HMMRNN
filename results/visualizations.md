@@ -1,6 +1,6 @@
 # Synthetic pipeline visualisations
 
-These figures were generated from `results/synthetic_run1` using `scripts/plot_synthetic_results.py`. They compare the HMM-MoA and HMM-TinyRNN variants trained on the long-dwell synthetic dataset.
+These figures were generated from `results/synthetic_run1` using `scripts/plot_synthetic_results.py`. They compare the SeriesHMM-TinyMoA (mixture-of-agents) and SeriesHMM-TinyRNN variants trained on the long-dwell synthetic dataset.
 
 ![Training negative log-likelihood trends](../fig/synthetic_run1_train_nll.svg)
 
@@ -17,3 +17,7 @@ These figures were generated from `results/synthetic_run1` using `scripts/plot_s
 ![Phase accuracy by split](../fig/synthetic_run1_phase_accuracy.svg)
 
 *Bar chart of train/test phase accuracy. The TinyRNN nearly recovers the latent phases, while the MoA baseline lags behind.*
+
+![Trial-history regressions (legacy reward view)](../fig/synthetic_run1_trial_history_reward.svg)
+
+*The original reward-only layout for the demo run is retained for reproducibility. Newer runs emit per-series panels that decompose the stay-bias coefficients into the familiar common/rare × reward/omission grid, mirroring the figures committed under `results/real_data/demo_fig/`.*

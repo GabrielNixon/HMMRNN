@@ -39,11 +39,8 @@ This is the expectation of the phase-specific agent mix under the phase posterio
 By construction, `sum_a r[t][a] = 1` at every trial.
 
 - **What’s plotted:** the four curves `t ↦ r[t][MF-R], r[t][MF-C], r[t][MB], r[t][Bias]`
-
-**Bottom band (dominant expert):** at each trial, `top_agent[t] = argmax_a r[t][a]`
-and color the band by `top_agent[t]`.
-
-- **Summary numbers you report:**
+- **Bottom band (dominant expert):** at each trial, `top_agent[t] = argmax_a r[t][a]` and color the band by `top_agent[t]`.
+**Summary numbers you report:**
 - **Averages:** `avg[a] = (1/T) * sum_{t=1..T} r[t][a]`
 - **Dominance counts:** number of trials where `a = argmax_a r[t][a]`
 

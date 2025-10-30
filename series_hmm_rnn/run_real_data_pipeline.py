@@ -305,6 +305,30 @@ def main():
         },
     )
 
+    # Trial-history regressions (observed vs models vs individual agents)
+    predictions = {
+        "SeriesHMM-TinyMoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+    }
+    agent_predictions = agent_action_sequences(agent_suite, test_batch)
+    predictions.update(agent_predictions)
+    history_results = summarise_trial_history(test_batch, predictions=predictions, max_lag=5)
+    write_json(
+        args.out_dir / "trial_history.json",
+        {
+            "lags": 5,
+            "series": [
+                {
+                    "label": result.label,
+                    "reward": list(result.reward),
+                    "choice": list(result.choice),
+                    "interaction": list(result.interaction),
+                }
+                for result in history_results
+            ],
+        },
+    )
+
     print(
         f"[summary] HMM-MoA test acc={test_metrics_moa['accuracy']:.3f}, "
         f"HMM-TinyRNN test acc={test_metrics_rnn['accuracy']:.3f}"

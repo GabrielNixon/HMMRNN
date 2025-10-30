@@ -18,10 +18,10 @@ Headline numbers from the default run (`results/synthetic_run1`) are:
 
 | Model | Split | NLL | Action acc. | Phase acc. |
 | --- | --- | --- | --- | --- |
-| HMM-MoA | Train | 0.804 | 0.548 | 0.538 |
-| HMM-MoA | Test | 0.817 | 0.553 | 0.528 |
-| HMM-TinyRNN | Train | 0.586 | 0.735 | 0.993 |
-| HMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
+| SeriesHMM-TinyMoA | Train | 0.804 | 0.548 | 0.538 |
+| SeriesHMM-TinyMoA | Test | 0.817 | 0.553 | 0.528 |
+| SeriesHMM-TinyRNN | Train | 0.586 | 0.735 | 0.993 |
+| SeriesHMM-TinyRNN | Test | 0.583 | 0.746 | 0.988 |
 
 Regenerate them with:
 
@@ -50,14 +50,9 @@ the ground-truth agents. 【F:results/real_data/demo/trial_history.json†L1-L20
 Additional panels for the fitted models and canonical agents live alongside the
 demo artefacts:
 
-- [HMM-MoA](results/real_data/demo_fig/real_demo_trial_history_hmm_moa.svg)
-- [HMM-TinyRNN](results/real_data/demo_fig/real_demo_trial_history_hmm_tinyrnn.svg)
+- [SeriesHMM-TinyMoA](results/real_data/demo_fig/real_demo_trial_history_serieshmm_tinymoa.svg)
+- [SeriesHMM-TinyRNN](results/real_data/demo_fig/real_demo_trial_history_serieshmm_tinyrnn.svg)
 - [Canonical agents (MF reward/choice, model-based, bias)](results/real_data/demo_fig/real_demo_trial_history_agent_mf_reward.svg) — companion files with the `agent_*` suffix cover each policy.
-
-For a deeper look at how the hybrid allocates responsibility across agents and phases,
-see [`results/real_data/comparison.md`](results/real_data/comparison.md), which
-walks through the HMM-MoA versus HMM-TinyRNN dominance plots and overlays the
-ground-truth phase sequence for context.【F:results/real_data/comparison.md†L1-L200】
 
 Use the plotting command below after running the pipeline to regenerate the
 figures for your dataset:

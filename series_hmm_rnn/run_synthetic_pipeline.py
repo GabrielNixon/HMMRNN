@@ -190,8 +190,8 @@ def main():
     )
 
     predictions = {
-        "HMM-MoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
-        "HMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyMoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "SeriesHMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
     }
     agent_predictions = agent_action_sequences(default_agent_suite(), test_data)
     predictions.update(agent_predictions)
@@ -204,12 +204,8 @@ def main():
                     {
                         "label": result.label,
                         "reward": list(result.reward),
-                        "transition": list(result.transition),
+                        "choice": list(result.choice),
                         "interaction": list(result.interaction),
-                        "common_reward": list(result.common_reward),
-                        "common_omission": list(result.common_omission),
-                        "rare_reward": list(result.rare_reward),
-                        "rare_omission": list(result.rare_omission),
                     }
                     for result in history_results
                 ],

@@ -26,17 +26,17 @@ so the metrics reflect a surrogate long-dwell two-step generator; swapping in a 
 
 - [Training NLL](./demo_fig/real_demo_train_nll.svg) / [Training accuracy](./demo_fig/real_demo_train_accuracy.svg)
 - [Evaluation accuracy (train/test)](./demo_fig/real_demo_action_accuracy.svg) / [Phase alignment](./demo_fig/real_demo_phase_accuracy.svg)
-- [Mixture responsibilities](./demo_fig/real_demo_agent_mix_serieshmm_tinymoa.svg) and state posteriors for [TinyMoA](./demo_fig/real_demo_state_posterior_serieshmm_tinymoa.svg) / [TinyRNN](./demo_fig/real_demo_state_posterior_serieshmm_tinyrnn.svg)
-- Trial-history panels normalised into the common/rare × reward/omission format:
-  - [Observed behaviour](./demo_fig/real_demo_trial_history_observed.svg)
-  - [SeriesHMM-TinyMoA](./demo_fig/real_demo_trial_history_serieshmm_tinymoa.svg)
-  - [SeriesHMM-TinyRNN](./demo_fig/real_demo_trial_history_serieshmm_tinyrnn.svg)
-  - [Canonical agents (MF reward/choice, model-based, bias)](./demo_fig/real_demo_trial_history_agent_mf_reward.svg) with matching `agent_*` companions
+- [Latent posterior traces](./demo_fig/real_demo_hmm_moa_posterior.svg) and [TinyRNN posterior](./demo_fig/real_demo_hmm_tinyrnn_posterior.svg)
+- [Trial-history regression (reward)](./demo_fig/real_demo_trial_history_reward.svg) /
+  [choice](./demo_fig/real_demo_trial_history_choice.svg) /
+  [choice × reward interaction](./demo_fig/real_demo_trial_history_interaction.svg) —
+  overlays observed behaviour, both SeriesHMM models, and the four constituent agents.
 
-The trial-history panels fit logistic regressions that include reward, transition, and
-reward×transition interaction terms. Coefficients are reported in the intuitive stay-bias
-layout where each lag contributes weights for *common/rare* and *reward/omission* pairings,
-mirroring the presentations used in the Mixture-of-Agents papers.
+The trial-history curves fit a simple logistic regression on sequences sampled from each
+model (arg-max policy) alongside the Model-free Reward, Model-free Choice, Model-based,
+and Bias agents. Observed data use the ground-truth actions; all model/agent traces rely on
+the recorded rewards as proxies for outcomes, matching the conventions in the SeriesHMM
+Mixture-of-Agents literature.
 
 ## Artefacts committed for reference
 

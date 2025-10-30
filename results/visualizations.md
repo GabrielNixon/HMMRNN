@@ -18,6 +18,8 @@ These figures were generated from `results/synthetic_run1` using `scripts/plot_s
 
 *Bar chart of train/test phase accuracy. The TinyRNN nearly recovers the latent phases, while the MoA baseline lags behind.*
 
-![Trial-history regressions (legacy reward view)](../fig/synthetic_run1_trial_history_reward.svg)
+![Trial-history regressions (reward)](../fig/synthetic_run1_trial_history_reward.svg)
 
-*The original reward-only layout for the demo run is retained for reproducibility. Newer runs emit per-series panels that decompose the stay-bias coefficients into the familiar common/rare × reward/omission grid, mirroring the figures committed under `results/real_data/demo_fig/`.*
+*Logistic regression coefficients across five reward-history lags for the observed behaviour, both SeriesHMM models, and each constituent agent (Model-free Reward/Choice, Model-based, Bias).* 
+
+Companion figures for choice-based and interaction-based regressions are available as `synthetic_run1_trial_history_choice.svg` and `synthetic_run1_trial_history_interaction.svg` in the same folder.

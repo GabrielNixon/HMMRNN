@@ -54,10 +54,6 @@ demo artefacts:
 - [SeriesHMM-TinyRNN](results/real_data/demo_fig/real_demo_trial_history_serieshmm_tinyrnn.svg)
 - [Canonical agents (MF reward/choice, model-based, bias)](results/real_data/demo_fig/real_demo_trial_history_agent_mf_reward.svg) — companion files with the `agent_*` suffix cover each policy.
 
-For a deeper look at how the hybrid allocates responsibility across agents and phases,
-see [`results/real_data/comparison.md`](results/real_data/comparison.md), which
-walks through the MoA-versus-TinyRNN dominance plots. 【F:results/real_data/comparison.md†L1-L200】
-
 Use the plotting command below after running the pipeline to regenerate the
 figures for your dataset:
 

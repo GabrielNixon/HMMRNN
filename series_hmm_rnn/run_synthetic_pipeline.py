@@ -169,8 +169,8 @@ def main():
     hmm_rnn = SeriesHMMTinyRNN(hidden=args.hidden_rnn, K=args.K, tau=args.tau).to(device)
     init_sticky(hmm_rnn, stay=args.sticky, eps=1e-3)
     history_rnn = train_series_model(hmm_rnn, train_device, args.epochs, args.lr, agents=None)
-    train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=None)
-    test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=None)
+    train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=agents)
+    test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=agents)
     results_rnn = {"train": train_metrics_rnn, "test": test_metrics_rnn}
     dump_training_artifacts(args.out_dir / "hmm_tinyrnn", hmm_rnn, history_rnn, results_rnn)
     torch.save(

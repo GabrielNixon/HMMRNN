@@ -186,6 +186,12 @@ def posterior_payload(label: str, extras: Dict[str, torch.Tensor], batch: Dict[s
     gating = extras.get("gating")
     if gating is not None:
         payload["gating"] = tensor_first_sequence(gating).tolist()
+    pi_log = extras.get("pi_log")
+    if pi_log is not None:
+        payload["pi_log"] = tensor_first_sequence(pi_log).tolist()
+    baseline = extras.get("baseline_q")
+    if baseline is not None:
+        payload["baseline_q"] = tensor_first_sequence(baseline).tolist()
     best_perm = metrics.get("best_permutation")
     if best_perm is not None:
         payload["best_permutation"] = best_perm
@@ -263,8 +269,8 @@ def main():
     init_sticky(hmm_rnn, stay=args.sticky, eps=1e-3)
     history_rnn = train_series_model(hmm_rnn, train_device, args.epochs, args.lr, agents=None)
     history_rnn_json = build_history(history_rnn)
-    train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=None)
-    test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=None)
+    train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=agents)
+    test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=agents)
     dump_training_artifacts(
         args.out_dir / "hmm_tinyrnn",
         hmm_rnn,

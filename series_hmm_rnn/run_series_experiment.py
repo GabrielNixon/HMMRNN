@@ -41,7 +41,7 @@ def run(epochs=150, B=64, T=400, hidden_tiny=2, hidden_series=6, K=2, lr=1e-3,
     opt_s = torch.optim.Adam(series.parameters(), lr=lr)
     for _ in range(epochs):
         train_epoch_series(series, opt_s, a_tr, r_tr, t_tr, agents)
-    s_loss, s_acc, gk, lg, _ = eval_epoch_series(series, a_te, r_te, t_te, agents)
+    s_loss, s_acc, gk, lg, _, _ = eval_epoch_series(series, a_te, r_te, t_te, agents)
     gamma = torch.softmax(lg, dim=-1)
     phase_acc_perm, best_perm, _ = phase_accuracy_permuted(gamma, s_te)
     print(f"Series-> NLL: {s_loss:.3f}  Acc: {s_acc:.3f}  PhaseAcc_perm: {phase_acc_perm:.3f}  Perm {best_perm}")

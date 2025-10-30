@@ -79,6 +79,7 @@ Precomputed series & stats:
 【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1-L1214】  
 MoA reference for alignment: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
+---
 
 ### How the latent-state **posterior** is computed
 

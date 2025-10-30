@@ -47,4 +47,4 @@ def eval_epoch_series(model, actions, rewards, transitions, agents=None):
     pi_log, gk, lg = model(x, Q_seq, actions=actions)
     loss = nll_loss(pi_log, actions).item()
     acc  = (pi_log.argmax(-1) == actions).float().mean().item()
-    return loss, acc, gk, lg, pi_log
+    return loss, acc, gk, lg, pi_log, Q_seq

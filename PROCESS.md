@@ -1,6 +1,6 @@
-# Synthetic HMM-MoA vs TinyRNN Process
+# Synthetic HMM-MoA vs HMM-TinyRNN Process
 
-This note documents how the repository synthesises behavioural sequences, why the design mirrors the HMM-MoA paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
+This note documents how the repository synthesises behavioural sequences, why the design mirrors the HMM-MoA (SeriesHMM TinyMoA) paper, and how the two competing emission models are trained. It focuses on the ingredients of the workflow (data, model, optimisation) rather than the final score tables.
 
 ![Generator overview](fig/synthetic_generation.svg)
 
@@ -12,7 +12,7 @@ This note documents how the repository synthesises behavioural sequences, why th
 - **Provide ground-truth supervision** – we record the latent phase labels alongside observable actions, rewards, and transition categories to validate phase recovery.
 
 ### 1.2 Generator pipeline
-1. **Phase sampling:** We initialise each sequence with a random phase and then draw contiguous blocks whose length is centred on the requested dwell time (default 120) with ±10 steps of jitter. This mirrors the quasi-deterministic regime used in the HMM-MoA work.【F:series_hmm_rnn/data.py†L4-L18】
+1. **Phase sampling:** We initialise each sequence with a random phase and then draw contiguous blocks whose length is centred on the requested dwell time (default 120) with ±10 steps of jitter. This mirrors the quasi-deterministic regime used in the SeriesHMM-TinyMoA work.【F:series_hmm_rnn/data.py†L4-L18】
 2. **Reward templates:** Each phase selects between two reward maps `R0` and `R1` that favour opposite first-stage actions, yielding a pair of Q-value templates conditioned on the latent phase.【F:series_hmm_rnn/data.py†L12-L16】
 3. **Policy mixture:** A softmax with inverse temperature `β` (default 3.5) samples actions from the mixture Q-values, blending common and rare transition expectations as in the task definition.【F:series_hmm_rnn/data.py†L16-L19】
 4. **Outcome sampling:** We simulate rare/common transitions and rewards based on the chosen action and latent state, returning `(actions, rewards, transitions, latent_states)` tensors for each batch element.【F:series_hmm_rnn/data.py†L19-L25】

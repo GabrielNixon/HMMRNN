@@ -24,20 +24,15 @@ from pathlib import Path
 from typing import Dict
 import torch
 
-from .agents import BiasAgent, MBReward, MFChoice, MFReward
 from .data import two_step_mb_generator
 from .metrics import phase_accuracy_permuted, align_gamma
 from .models import SeriesHMMTinyMoARNN, SeriesHMMTinyRNN
 from .train import eval_epoch_series, train_epoch_series
-
-
-def default_agents():
-    return [
-        ("MFr", MFReward(alpha=0.3, decay=0.0)),
-        ("MFc", MFChoice(kappa=0.2, rho=0.0)),
-        ("MB", MBReward(p_common=0.7, alpha_state=0.2)),
-        ("Bias", BiasAgent(0.0, 0.0)),
-    ]
+from .trial_history import (
+    agent_action_sequences,
+    default_agent_suite,
+    summarise_trial_history,
+)
 
 
 def init_sticky(series_model, stay=0.97, eps=1e-3):
@@ -102,7 +97,7 @@ def write_json(path: Path, payload) -> None:
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg = eval_epoch_series(
+    loss, acc, gk, lg, pi_log, Q_seq = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -111,7 +106,9 @@ def evaluate_series(model, batch, agents=None):
     )
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
-    extras = {"gamma": gamma, "gating": gk}
+    extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
+    if Q_seq is not None:
+        extras["baseline_q"] = Q_seq
     if "phases" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["phases"])
         metrics.update(
@@ -191,6 +188,12 @@ def posterior_payload(label: str, extras: Dict[str, torch.Tensor], batch: Dict[s
     gating = extras.get("gating")
     if gating is not None:
         payload["gating"] = tensor_first_sequence(gating).tolist()
+    pi_log = extras.get("pi_log")
+    if pi_log is not None:
+        payload["pi_log"] = tensor_first_sequence(pi_log).tolist()
+    baseline = extras.get("baseline_q")
+    if baseline is not None:
+        payload["baseline_q"] = tensor_first_sequence(baseline).tolist()
     best_perm = metrics.get("best_permutation")
     if best_perm is not None:
         payload["best_permutation"] = best_perm
@@ -239,7 +242,8 @@ def main():
     train_device = to_device(train_batch, device)
     test_device = to_device(test_batch, device)
 
-    agents = default_agents()
+    agent_suite = default_agent_suite()
+    agents = agent_suite
 
     print("[hmm-moa] fitting SeriesHMMTinyMoARNN")
     hmm_moa = SeriesHMMTinyMoARNN(
@@ -259,7 +263,7 @@ def main():
     )
     write_json(
         args.out_dir / "hmm_moa" / "posterior_trace.json",
-        posterior_payload("SeriesHMM-TinyMoA", test_extras_moa, test_batch, test_metrics_moa),
+        posterior_payload("HMM-MoA", test_extras_moa, test_batch, test_metrics_moa),
     )
 
     print("[hmm-tinyrnn] fitting SeriesHMMTinyRNN")
@@ -267,8 +271,8 @@ def main():
     init_sticky(hmm_rnn, stay=args.sticky, eps=1e-3)
     history_rnn = train_series_model(hmm_rnn, train_device, args.epochs, args.lr, agents=None)
     history_rnn_json = build_history(history_rnn)
-    train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=None)
-    test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=None)
+    train_metrics_rnn, train_extras_rnn = evaluate_series(hmm_rnn, train_device, agents=agents)
+    test_metrics_rnn, test_extras_rnn = evaluate_series(hmm_rnn, test_device, agents=agents)
     dump_training_artifacts(
         args.out_dir / "hmm_tinyrnn",
         hmm_rnn,
@@ -278,12 +282,40 @@ def main():
     )
     write_json(
         args.out_dir / "hmm_tinyrnn" / "posterior_trace.json",
-        posterior_payload("SeriesHMM-TinyRNN", test_extras_rnn, test_batch, test_metrics_rnn),
+        posterior_payload("HMM-TinyRNN", test_extras_rnn, test_batch, test_metrics_rnn),
+    )
+
+    # Trial-history regressions (observed vs models vs individual agents)
+    predictions = {
+        "HMM-MoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "HMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+    }
+    agent_predictions = agent_action_sequences(agent_suite, test_batch)
+    predictions.update(agent_predictions)
+    history_results = summarise_trial_history(test_batch, predictions=predictions, max_lag=5)
+    write_json(
+        args.out_dir / "trial_history.json",
+        {
+            "lags": 5,
+            "series": [
+                {
+                    "label": result.label,
+                    "reward": list(result.reward),
+                    "transition": list(result.transition),
+                    "interaction": list(result.interaction),
+                    "common_reward": list(result.common_reward),
+                    "common_omission": list(result.common_omission),
+                    "rare_reward": list(result.rare_reward),
+                    "rare_omission": list(result.rare_omission),
+                }
+                for result in history_results
+            ],
+        },
     )
 
     print(
-        f"[summary] TinyMoA test acc={test_metrics_moa['accuracy']:.3f}, "
-        f"TinyRNN test acc={test_metrics_rnn['accuracy']:.3f}"
+        f"[summary] HMM-MoA test acc={test_metrics_moa['accuracy']:.3f}, "
+        f"HMM-TinyRNN test acc={test_metrics_rnn['accuracy']:.3f}"
     )
 
 

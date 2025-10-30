@@ -58,7 +58,7 @@ def maybe_cpu(tensor_or_none):
 
 
 def evaluate_series(model, batch, agents=None):
-    loss, acc, gk, lg, pi_log = eval_epoch_series(
+    loss, acc, gk, lg, pi_log, baseline_q = eval_epoch_series(
         model,
         batch["actions"],
         batch["rewards"],
@@ -68,6 +68,8 @@ def evaluate_series(model, batch, agents=None):
     gamma = torch.softmax(lg, dim=-1)
     metrics = {"nll": float(loss), "accuracy": float(acc)}
     extras = {"gamma": gamma, "gating": gk, "pi_log": pi_log}
+    if baseline_q is not None:
+        extras["baseline_q"] = baseline_q
     if "states" in batch:
         phase_acc, perm, confusion = phase_accuracy_permuted(gamma, batch["states"])
         metrics.update(

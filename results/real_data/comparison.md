@@ -21,6 +21,27 @@ across the run the weights settle near 0.16 (MF reward), 0.22 (MF choice), 0.30
 (model-based), and 0.31 (bias), underscoring that the hybrid leans heavily on the
 planning-style and static-bias policies.【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
+## TinyRNN phase responsibility (`real_demo_agent_mix_hmm_tinyrnn.svg`)
+
+![HMM-TinyRNN phase mix](./demo_fig/real_demo_agent_mix_hmm_tinyrnn.svg)
+
+*Reading the plot*: the blue and orange lines track the SeriesHMM posterior over
+the TinyRNN's two recurrent phases, while the coloured bars at the bottom flag the
+ground-truth task blocks for quick alignment with experimental context.
+
+*What it shows*: the blue phase averages 0.71 responsibility and wins 136 of the
+200 trials, whereas the orange phase carries the remaining 0.29 mass across 64
+trials.【374e99†L1-L3】 Responsibility switches cluster around the same probe and
+reversal windows that trigger handovers between the TinyMoA bias and model-based
+experts, highlighting that the neural controller mirrors those behavioural
+regimes. Correlating each TinyRNN phase with the TinyMoA agent weights reveals the
+mapping explicitly: the dominant (blue) state co-varies with the Mixture-of-Agent's
+model-free reward and choice heads (r ≈ 0.66 and 0.57) while anti-correlating with
+the bias expert, and the rarer (orange) state flips that pattern, aligning most
+strongly with the bias responsibility (r ≈ 0.76).【423ce9†L1-L8】 Together these
+statistics confirm that the TinyRNN moves through modes that shadow the
+Mixture-of-Agents decomposition rather than inventing entirely new dynamics.
+
 ## TinyMoA latent-state posterior (`real_demo_state_posterior_serieshmm_tinymoa.svg`)
 
 ![SeriesHMM-TinyMoA state posterior](./demo_fig/real_demo_state_posterior_serieshmm_tinymoa.svg)

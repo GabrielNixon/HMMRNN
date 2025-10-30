@@ -5,8 +5,8 @@ Hybrid **Hidden Markov Model + recurrent mixture-of-agents** tools for analysing
 ## What lives in this branch
 
 - **TinyMoARNN** — a compact GRU that mixes simple “agents” (model-free reward/choice, model-based, bias) to produce action logits. 【F:series_hmm_rnn/models.py†L26-L178】
-- **SeriesHMMTinyMoARNN** — an HMM whose emissions are the per-phase TinyMoA heads; phase posteriors are inferred with forward–backward and used to weight the agents. 【F:series_hmm_rnn/models.py†L181-L356】
-- **SeriesHMMTinyRNN** — swaps the MoA emissions for phase-specific GRU heads to obtain a smooth recurrent controller. 【F:series_hmm_rnn/models.py†L359-L511】
+- **HMM-MoA (`SeriesHMMTinyMoARNN`)** — an HMM whose emissions are per-phase mixtures of the canonical MF reward/choice, model-based, and bias agents. Forward–backward inference produces the phase weights that gate the agents.【F:series_hmm_rnn/models.py†L181-L356】
+- **HMM-TinyRNN (`SeriesHMMTinyRNN`)** — swaps the MoA emissions for phase-specific GRU heads to obtain a smooth recurrent controller constrained by the same SeriesHMM backbone.【F:series_hmm_rnn/models.py†L359-L511】
 - **Synthetic pipeline** (`series_hmm_rnn/run_synthetic_pipeline.py`) — generates long-dwell two-step trajectories, trains both models, and exports histories/metrics ready for documentation or plotting. 【F:series_hmm_rnn/run_synthetic_pipeline.py†L1-L222】
 - **Plotting helper** (`scripts/plot_synthetic_results.py`) — renders lightweight SVG training curves, trial-history panels, and agent/state responsibility breakdowns directly from the JSON logs. 【F:scripts/plot_synthetic_results.py†L1-L676】
 

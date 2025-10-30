@@ -255,7 +255,7 @@ def main():
     )
     write_json(
         args.out_dir / "hmm_moa" / "posterior_trace.json",
-        posterior_payload("SeriesHMM-TinyMoA", test_extras_moa, test_batch, test_metrics_moa),
+        posterior_payload("HMM-MoA", test_extras_moa, test_batch, test_metrics_moa),
     )
 
     print("[hmm-tinyrnn] fitting SeriesHMMTinyRNN")
@@ -274,7 +274,35 @@ def main():
     )
     write_json(
         args.out_dir / "hmm_tinyrnn" / "posterior_trace.json",
-        posterior_payload("SeriesHMM-TinyRNN", test_extras_rnn, test_batch, test_metrics_rnn),
+        posterior_payload("HMM-TinyRNN", test_extras_rnn, test_batch, test_metrics_rnn),
+    )
+
+    # Trial-history regressions (observed vs models vs individual agents)
+    predictions = {
+        "HMM-MoA": test_extras_moa["pi_log"].argmax(dim=-1).cpu(),
+        "HMM-TinyRNN": test_extras_rnn["pi_log"].argmax(dim=-1).cpu(),
+    }
+    agent_predictions = agent_action_sequences(agent_suite, test_batch)
+    predictions.update(agent_predictions)
+    history_results = summarise_trial_history(test_batch, predictions=predictions, max_lag=5)
+    write_json(
+        args.out_dir / "trial_history.json",
+        {
+            "lags": 5,
+            "series": [
+                {
+                    "label": result.label,
+                    "reward": list(result.reward),
+                    "transition": list(result.transition),
+                    "interaction": list(result.interaction),
+                    "common_reward": list(result.common_reward),
+                    "common_omission": list(result.common_omission),
+                    "rare_reward": list(result.rare_reward),
+                    "rare_omission": list(result.rare_omission),
+                }
+                for result in history_results
+            ],
+        },
     )
 
     # Trial-history regressions (observed vs models vs individual agents)
@@ -302,8 +330,8 @@ def main():
     )
 
     print(
-        f"[summary] TinyMoA test acc={test_metrics_moa['accuracy']:.3f}, "
-        f"TinyRNN test acc={test_metrics_rnn['accuracy']:.3f}"
+        f"[summary] HMM-MoA test acc={test_metrics_moa['accuracy']:.3f}, "
+        f"HMM-TinyRNN test acc={test_metrics_rnn['accuracy']:.3f}"
     )
 
 

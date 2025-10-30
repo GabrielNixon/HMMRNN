@@ -5,10 +5,10 @@ Hybrid **Hidden Markov Model + recurrent mixture-of-agents** tools for analysing
 ## What lives in this branch
 
 - **TinyMoARNN** — a compact GRU that mixes simple “agents” (model-free reward/choice, model-based, bias) to produce action logits. 【F:series_hmm_rnn/models.py†L26-L178】
-- **SeriesHMMTinyMoARNN** — an HMM whose emissions are the per-phase TinyMoA heads; phase posteriors are inferred with forward–backward and used to weight the agents. 【F:series_hmm_rnn/models.py†L181-L356】
-- **SeriesHMMTinyRNN** — swaps the MoA emissions for phase-specific GRU heads to obtain a smooth recurrent controller. 【F:series_hmm_rnn/models.py†L359-L511】
+- **HMM-MoA (`SeriesHMMTinyMoARNN`)** — an HMM whose emissions are per-phase mixtures of the canonical MF reward/choice, model-based, and bias agents. Forward–backward inference produces the phase weights that gate the agents.【F:series_hmm_rnn/models.py†L181-L356】
+- **HMM-TinyRNN (`SeriesHMMTinyRNN`)** — swaps the MoA emissions for phase-specific GRU heads to obtain a smooth recurrent controller constrained by the same SeriesHMM backbone.【F:series_hmm_rnn/models.py†L359-L511】
 - **Synthetic pipeline** (`series_hmm_rnn/run_synthetic_pipeline.py`) — generates long-dwell two-step trajectories, trains both models, and exports histories/metrics ready for documentation or plotting. 【F:series_hmm_rnn/run_synthetic_pipeline.py†L1-L222】
-- **Plotting helper** (`scripts/plot_synthetic_results.py`) — renders lightweight SVG training curves and accuracy comparisons directly from the JSON logs. 【F:scripts/plot_synthetic_results.py†L1-L333】
+- **Plotting helper** (`scripts/plot_synthetic_results.py`) — renders lightweight SVG training curves, trial-history panels, and agent/state responsibility breakdowns directly from the JSON logs. 【F:scripts/plot_synthetic_results.py†L1-L676】
 
 ## Reproduced synthetic benchmark
 
@@ -30,6 +30,41 @@ python -m series_hmm_rnn.run_synthetic_pipeline --epochs 50 --B 16 --T 200 --out
 ```
 
 Add `--save-artifacts` if you also need checkpoints, posteriors, or datasets (kept out of git by default). 【F:results/results.md†L1-L40】
+
+## Demo real-data analysis
+
+The `results/real_data/demo` folder captures the smoke-test run of
+`series_hmm_rnn.run_real_data_pipeline` on a surrogate Mixture-of-Agents style
+dataset. Replace the bundle with your converted `.npz` export to reproduce the
+same reports on genuine behavioural data. 【F:results/real_data/README.md†L1-L62】
+
+### Trial-history regressions
+
+The plotting helper now emits per-series panels that normalise the logistic
+stay coefficients into the familiar *common/rare × reward/omission* layout. This
+makes it easy to verify whether each model matches the qualitative structure of
+the ground-truth agents. 【F:results/real_data/demo/trial_history.json†L1-L200】
+
+![Observed stay biases by transition and outcome](results/real_data/demo_fig/real_demo_trial_history_observed.svg)
+
+Additional panels for the fitted models and canonical agents live alongside the
+demo artefacts:
+
+- [HMM-MoA](results/real_data/demo_fig/real_demo_trial_history_hmm_moa.svg)
+- [HMM-TinyRNN](results/real_data/demo_fig/real_demo_trial_history_hmm_tinyrnn.svg)
+- [Canonical agents (MF reward/choice, model-based, bias)](results/real_data/demo_fig/real_demo_trial_history_agent_mf_reward.svg) — companion files with the `agent_*` suffix cover each policy.
+
+For a deeper look at how the hybrid allocates responsibility across agents and phases,
+see [`results/real_data/comparison.md`](results/real_data/comparison.md), which
+walks through the HMM-MoA versus HMM-TinyRNN dominance plots and overlays the
+ground-truth phase sequence for context.【F:results/real_data/comparison.md†L1-L200】
+
+Use the plotting command below after running the pipeline to regenerate the
+figures for your dataset:
+
+```bash
+python scripts/plot_synthetic_results.py <run-dir> --out-dir <figure-dir> --prefix <name>
+```
 
 ## Quickstart
 
@@ -55,7 +90,7 @@ Use `--plot-out` and `--history-out` to export per-epoch diagnostics for bespoke
 python scripts/plot_synthetic_results.py results/synthetic_run1 --out-dir fig --prefix synthetic_run1
 ```
 
-The script emits SVG summaries suitable for git-friendly visual inspection. 【F:scripts/plot_synthetic_results.py†L1-L333】
+  The script emits SVG summaries suitable for git-friendly visual inspection. 【F:scripts/plot_synthetic_results.py†L1-L676】
 
 ## Repository layout
 

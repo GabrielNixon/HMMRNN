@@ -160,8 +160,8 @@ These plots demonstrate that while both models share the same sticky HMM
 transition prior (0.97 self-stay), the TinyRNN’s smoother emission dynamics make
 it far better at inferring and tracking latent behavioral regimes.
 
-![SeriesHMM-TinyMoA posterior](../fig/synthetic_demo_hmm_moa_posterior.svg)
-![SeriesHMM-TinyRNN posterior](../fig/synthetic_demo_hmm_tinyrnn_posterior.svg)
+![HMM-MoA posterior](../fig/synthetic_demo_hmm_moa_posterior.svg)
+![HMM-TinyRNN posterior](../fig/synthetic_demo_hmm_tinyrnn_posterior.svg)
 
 
 

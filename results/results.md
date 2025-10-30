@@ -1,4 +1,4 @@
-# Synthetic HMM-MoA vs TinyRNN Results
+# Synthetic HMM-MoA vs HMM-TinyRNN Results
 
 This run executes `series_hmm_rnn.run_synthetic_pipeline` with the following key arguments:
 

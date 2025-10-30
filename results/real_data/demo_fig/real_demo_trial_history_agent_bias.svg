@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320">
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<text x="240.0" y="24" text-anchor="middle" font-size="16" font-family="sans-serif">Agent: Bias</text>
+<text x="35.0" y="160.0" transform="rotate(-90 35.0,160.0)" text-anchor="middle" font-size="12" font-family="sans-serif">Stay log-odds</text>
+<text x="240.0" y="300" text-anchor="middle" font-size="12" font-family="sans-serif">Trials back</text>
+<line x1="70" y1="260" x2="440" y2="260" stroke="#000"/>
+<line x1="70" y1="45" x2="70" y2="260" stroke="#000"/>
+<line x1="70" y1="152.50" x2="440" y2="152.50" stroke="#bbbbbb"/>
+<line x1="70" y1="260.00" x2="440" y2="260.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="264.00" text-anchor="end" font-size="11" font-family="sans-serif">-1.05</text>
+<line x1="70" y1="206.25" x2="440" y2="206.25" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="210.25" text-anchor="end" font-size="11" font-family="sans-serif">-0.525</text>
+<line x1="70" y1="152.50" x2="440" y2="152.50" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="156.50" text-anchor="end" font-size="11" font-family="sans-serif">0</text>
+<line x1="70" y1="98.75" x2="440" y2="98.75" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="102.75" text-anchor="end" font-size="11" font-family="sans-serif">0.525</text>
+<line x1="70" y1="45.00" x2="440" y2="45.00" stroke="#e0e0e0" stroke-dasharray="4 4"/>
+<text x="60" y="49.00" text-anchor="end" font-size="11" font-family="sans-serif">1.05</text>
+<polyline fill="none" stroke="#E45756" stroke-width="2" points="70.00,152.50 162.50,152.50 255.00,152.50 347.50,152.50 440.00,152.50"/>
+<circle cx="70.00" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="162.50" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="255.00" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="347.50" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="440.00" cy="152.50" r="3" fill="#E45756"/>
+<polyline fill="none" stroke="#E45756" stroke-width="2" stroke-dasharray="6 3" points="70.00,152.50 162.50,152.50 255.00,152.50 347.50,152.50 440.00,152.50"/>
+<circle cx="70.00" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="162.50" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="255.00" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="347.50" cy="152.50" r="3" fill="#E45756"/>
+<circle cx="440.00" cy="152.50" r="3" fill="#E45756"/>
+<polyline fill="none" stroke="#4C78A8" stroke-width="2" points="70.00,152.50 162.50,152.50 255.00,152.50 347.50,152.50 440.00,152.50"/>
+<circle cx="70.00" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="162.50" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="255.00" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="347.50" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="440.00" cy="152.50" r="3" fill="#4C78A8"/>
+<polyline fill="none" stroke="#4C78A8" stroke-width="2" stroke-dasharray="6 3" points="70.00,152.50 162.50,152.50 255.00,152.50 347.50,152.50 440.00,152.50"/>
+<circle cx="70.00" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="162.50" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="255.00" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="347.50" cy="152.50" r="3" fill="#4C78A8"/>
+<circle cx="440.00" cy="152.50" r="3" fill="#4C78A8"/>
+<line x1="445" y1="45" x2="463" y2="45" stroke="#E45756" stroke-width="2"/>
+<text x="467" y="49" font-size="11" font-family="sans-serif">Common reward</text>
+<line x1="445" y1="63" x2="463" y2="63" stroke="#E45756" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="467" y="67" font-size="11" font-family="sans-serif">Common omission</text>
+<line x1="445" y1="81" x2="463" y2="81" stroke="#4C78A8" stroke-width="2"/>
+<text x="467" y="85" font-size="11" font-family="sans-serif">Rare reward</text>
+<line x1="445" y1="99" x2="463" y2="99" stroke="#4C78A8" stroke-width="2" stroke-dasharray="6 3"/>
+<text x="467" y="103" font-size="11" font-family="sans-serif">Rare omission</text>
+<text x="70.00" y="276" text-anchor="middle" font-size="11" font-family="sans-serif">1</text>
+<text x="162.50" y="276" text-anchor="middle" font-size="11" font-family="sans-serif">2</text>
+<text x="255.00" y="276" text-anchor="middle" font-size="11" font-family="sans-serif">3</text>
+<text x="347.50" y="276" text-anchor="middle" font-size="11" font-family="sans-serif">4</text>
+<text x="440.00" y="276" text-anchor="middle" font-size="11" font-family="sans-serif">5</text>
+</svg>

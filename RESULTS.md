@@ -6,8 +6,8 @@ only visualisations that can be regenerated directly from source.
 
 ## Experiments in scope
 
-- **HMM-MoA** (mixture-of-agents emissions) trained on the long-dwell two-step generator.
-- **HMM-TinyRNN** (smooth recurrent emissions) trained on the same dataset with shared hyperparameters.
+- **HMM-MoA** (mixture-of-agents emissions; implemented by `SeriesHMMTinyMoARNN`) trained on the long-dwell two-step generator.
+- **HMM-TinyRNN** (smooth recurrent emissions; implemented by `SeriesHMMTinyRNN`) trained on the same dataset with shared hyperparameters.
 - Supporting TinyMoA-only fits for debugging, and the plotting scripts that convert JSON logs into SVG figures.
 
 The pipeline that orchestrates the dataset synthesis, training, and logging lives in
@@ -60,5 +60,5 @@ dumped by the pipeline. 【F:results/results.md†L1-L40】
 
    Use `--plot-out` or `--history-out` when you need richer per-epoch traces. 【F:series_hmm_rnn/run_tiny_fit.py†L1-L354】
 
-With this collation in place, the main branch exposes the entire HMM-MoA vs TinyRNN workflow — models, training scripts, metrics,
-and figures — through text files that remain compatible with lightweight review tooling.
+With this collation in place, the main branch exposes the entire HMM-MoA vs HMM-TinyRNN workflow — models,
+training scripts, metrics, and figures — through text files that remain compatible with lightweight review tooling.

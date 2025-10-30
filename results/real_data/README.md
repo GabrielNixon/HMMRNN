@@ -17,10 +17,10 @@ so the metrics reflect a surrogate long-dwell two-step generator; swapping in a 
 
 | Model              | Split | NLL  | Action accuracy | Phase accuracy |
 |--------------------|-------|------|-----------------|----------------|
-| SeriesHMM-TinyMoA  | Train | 0.920 | 0.567           | 0.538          |
-| SeriesHMM-TinyMoA  | Test  | 0.909 | 0.575           | 0.635          |
-| SeriesHMM-TinyRNN  | Train | 0.656 | 0.528           | 0.935          |
-| SeriesHMM-TinyRNN  | Test  | 0.667 | 0.490           | 0.935          |
+| HMM-MoA  | Train | 0.920 | 0.567           | 0.538          |
+| HMM-MoA  | Test  | 0.909 | 0.575           | 0.635          |
+| HMM-TinyRNN  | Train | 0.656 | 0.528           | 0.935          |
+| HMM-TinyRNN  | Test  | 0.667 | 0.490           | 0.935          |
 
 ## Visual summaries
 

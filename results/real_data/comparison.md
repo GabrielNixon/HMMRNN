@@ -40,9 +40,6 @@ By construction, `sum_a r[t][a] = 1` at every trial.
 
 - **What’s plotted:** the four curves `t ↦ r[t][MF-R], r[t][MF-C], r[t][MB], r[t][Bias]`
 - **Bottom band (dominant expert):** at each trial, `top_agent[t] = argmax_a r[t][a]` and color the band by `top_agent[t]`.
-**Summary numbers you report:**
-- **Averages:** `avg[a] = (1/T) * sum_{t=1..T} r[t][a]`
-- **Dominance counts:** number of trials where `a = argmax_a r[t][a]`
 
 Source for inputs: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
 
@@ -58,6 +55,46 @@ To compare one-to-one with TinyMoA, we project the TinyRNN phase posterior into 
 - Session averages (projected): **MF-R 0.16**, **MF-C 0.43**, **MB 0.27**, **Bias 0.15** — emphasizing **Choice** vs **Planner**. 【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1-L1214】
 - Trial-wise winner (projected): **MF-choice 149** trials, **Model-based 51**; no prolonged MF-reward/Bias dominance. 【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1-L1214】
 - Visual alignment: long **orange** (MF-choice) spans and **green** (Model-based) crests mirror MoA bands and RNN phase switches. 【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1-L1214】【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
+
+**How it’s computed (projecting TinyRNN into MoA agent space)**
+
+- **Inputs:**
+  - TinyRNN **phase posteriors** per trial: `gamma_rnn[t][p] = P(z_t = p | data)`  
+    (from `results/real_data/demo/hmm_tinyrnn/posterior_trace.json`).
+  - TinyMoA **per-phase agent weights**: `w[p] = { MF-R, MF-C, MB, Bias }`  
+    (same weights used for the MoA agent-mix; rows sum to 1).
+
+- **Phase alignment (optional but recommended):**
+  - Choose a permutation to line up TinyRNN phases with MoA phases (you used `[0, 1]`).
+  - Apply it to `gamma_rnn[t][p]` before projection if needed.
+
+- **Projected agent responsibilities:** for each trial `t` and agent `a`, `r_proj[t][a] = sum_p( gamma_rnn[t][p] * w[p][a] )`
+This is the expectation of the MoA per-phase agent mix under the **TinyRNN** phase responsibilities.  
+By construction, `sum_a r_proj[t][a] = 1` at every trial.
+
+- **What’s plotted:** the four curves `t ↦ r_proj[t][MF-R], r_proj[t][MF-C], r_proj[t][MB], r_proj[t][Bias]`
+
+- **Bottom band (dominant expert):** at each trial, `top_agent_proj[t] = argmax_a r_proj[t][a]` and color the band by `top_agent_proj[t]`.
+Precomputed series & stats:  
+【F:results/real_data/demo/hmm_tinyrnn/projected_agent_mix.json†L1-L1214】  
+MoA reference for alignment: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
+
+### How the latent-state **posterior** is computed (tiny primer)
+
+- For each trial \(t\) and phase \(p\), the model can score how likely the observed action was **if** we were in phase \(p\):  
+  \(L_t(p) = p(a_t \mid z_t=p, \text{history}_t)\).  
+  - **TinyMoA:** \(L_t(p)\) comes from the **phase-specific agent mixture** (MB/MF/etc. with weights \(w^{(p)}\)).  
+  - **TinyRNN:** \(L_t(p)\) comes from the RNN head conditioned on phase \(p\).
+
+- We then run the standard **forward–backward** pass of an HMM to combine **past** and **future** evidence:
+  - **Forward (filtering):**  
+    \(\alpha_t(p) \propto L_t(p)\, \sum_q \alpha_{t-1}(q)\,T_{q p}\), with \(\alpha_1(p)\propto \pi_p\,L_1(p)\).
+  - **Backward (smoothing):**  
+    \(\beta_t(p) \propto \sum_q T_{p q}\, L_{t+1}(q)\,\beta_{t+1}(q)\), with \(\beta_T(p)=1\).
+
+- **Posterior over phases at trial \(t\):**  
+  \(\displaystyle \gamma_t(p)=\frac{\alpha_t(p)\,\beta_t(p)}{\sum_r \alpha_t(r)\,\beta_t(r)}\).  
+  (These are the values plotted as stacked areas in the two figures below. With 2 phases, the plot shows \(\gamma_t(\text{Phase 1})\) and \(1-\gamma_t(\text{Phase 1})\).)
 
 ---
 

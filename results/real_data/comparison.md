@@ -1,4 +1,4 @@
-# SeriesHMM TinyMoA vs TinyRNN — Responsibility Comparison
+# SeriesHMM TinyMoA vs TinyRNN
 
 This note condenses figures under `results/real_data/demo_fig` to show how the hybrids behave internally on the demo real-data run. Each section embeds the generated SVG and highlights slide-ready takeaways.
 

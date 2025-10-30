@@ -34,15 +34,13 @@ Four trajectories = MoA experts (MF-reward, MF-choice, Model-based, Bias). Value
   - Per-trial **phase posteriors**: `gamma[t][p] = P(z_t = p | data)` for each trial `t` and phase `p`.
   - **Per-phase agent weights** (TinyMoA): `w[p] = { MF-R, MF-C, MB, Bias }` (non-negative, sum to 1).
 
-- **Trial-wise agent responsibilities:** for each trial `t` and agent `a`, r[t][a] = sum_p( gamma[t][p] * w[p][a] )
-
+- **Trial-wise agent responsibilities:** for each trial `t` and agent `a`, `r[t][a] = sum_p( gamma[t][p] * w[p][a] )`
 This is the expectation of the phase-specific agent mix under the phase posterior.
 By construction, `sum_a r[t][a] = 1` at every trial.
 
-- **What’s plotted:** the four curves t ↦ r[t][MF-R], r[t][MF-C], r[t][MB], r[t][Bias]
+- **What’s plotted:** the four curves `t ↦ r[t][MF-R], r[t][MF-C], r[t][MB], r[t][Bias]`
 
-- **Bottom band (dominant expert):** at each trial, top_agent[t] = argmax_a r[t][a]
-
+**Bottom band (dominant expert):** at each trial, `top_agent[t] = argmax_a r[t][a]`
 and color the band by `top_agent[t]`.
 
 - **Summary numbers you report:**
@@ -50,10 +48,6 @@ and color the band by `top_agent[t]`.
 - **Dominance counts:** number of trials where `a = argmax_a r[t][a]`
 
 Source for inputs: 【F:results/real_data/demo/hmm_moa/posterior_trace.json†L1-L200】
-
-
-
-
 
 ---
 

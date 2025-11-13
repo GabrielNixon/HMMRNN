@@ -112,20 +112,17 @@ The paper’s main metric is the normalized likelihood, defined as:
 
 Normalized Likelihood = exp(L / N)
 
-Your model gives:
-
+Our model gives:
 - **Avg log-prob per free trial:** –0.437999  
 - **Normalized likelihood:**
-
 exp(-0.437999) = 0.6453
 
 
-In the paper’s figures, normalized likelihood values cluster around **0.63–0.67**, so your **0.6453** falls exactly in the same range.
+In the paper’s figures, normalized likelihood values cluster around **0.63–0.67**, so our **0.6453** falls exactly in the same range.
 
 **Log-Likelihood Scale**
 
-Your log-likelihood per free trial (**–0.438**) matches what we expect for a model predicting chosen actions with **~64% probability** — aligned with the modeling framework reported in the paper.
-
+Our log-likelihood per free trial (**–0.438**) matches what we expect for a model predicting chosen actions with **~64% probability**.
 
 
 All values were also saved in:

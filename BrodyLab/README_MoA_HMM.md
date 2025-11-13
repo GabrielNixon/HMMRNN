@@ -110,18 +110,15 @@ HMM_trial_predictions.csv
 
 The paper’s main metric is the normalized likelihood, defined as:
 
-\[
-\text{normLik} = \exp\left(\frac{L}{N}\right)
-\]
+Normalized Likelihood = exp(L / N)
 
 Your model gives:
 
 - **Avg log-prob per free trial:** –0.437999  
 - **Normalized likelihood:**
 
-\[
-\exp(-0.437999) = 0.6453
-\]
+exp(-0.437999) = 0.6453
+
 
 In the paper’s figures, normalized likelihood values cluster around **0.63–0.67**, so your **0.6453** falls exactly in the same range.
 

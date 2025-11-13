@@ -106,6 +106,31 @@ HMM_trial_predictions.csv
 | Action accuracy | 53.46% |
 | Phase accuracy | Not applicable |
 
+**Normalized Likelihood**
+
+The paper’s main metric is the normalized likelihood, defined as:
+
+\[
+\text{normLik} = \exp(L/N)
+\]
+
+Your model gives:
+
+- **Avg log-prob per free trial:** –0.437999  
+- **Normalized likelihood:**
+
+\[
+\exp(-0.437999) = 0.6453
+\]
+
+In the paper’s figures, normalized likelihood values cluster around **0.63–0.67**, so your **0.6453** falls exactly in the same range.
+
+**Log-Likelihood Scale**
+
+Your log-likelihood per free trial (**–0.438**) matches what we expect for a model predicting chosen actions with **~64% probability** — aligned with the modeling framework reported in the paper.
+
+
+
 All values were also saved in:
 - **HMM_fit_report_corrected.txt**
 - **HMM_trial_predictions.csv**

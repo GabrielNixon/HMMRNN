@@ -111,7 +111,7 @@ HMM_trial_predictions.csv
 The paper’s main metric is the normalized likelihood, defined as:
 
 \[
-\text{normLik} = \exp(L/N)
+\text{normLik} = \exp\left(\frac{L}{N}\right)
 \]
 
 Your model gives:
